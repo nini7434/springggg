@@ -87,7 +87,8 @@
     <header class="bg-white sticky top-0 z-50 shadow-sm">
       <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <div class="flex items-center cursor-pointer">
-          <i data-lucide="heart" class="h-6 w-6 text-pink-500 mr-2"></i>
+          <!-- 로고 이미지 추가 (현재는 placeholder 이미지) -->
+          <img src="https://via.placeholder.com/40/EC4899/ffffff?text=♥" alt="서비스 로고" class="h-8 w-8 mr-2">
           <h1 class="text-2xl font-medium">다시, 봄</h1>
         </div>
         
@@ -162,7 +163,7 @@
           
           <!-- Illustrative image -->
           <div class="max-w-5xl mx-auto mt-16 hidden md:block">
-            <img src="https://images.unsplash.com/photo-1492001871710-96e4361c55e6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="한강에서 마주친 인연" class="w-full rounded-2xl shadow-lg">
+            <img src="https://source.unsplash.com/1000x600/?hanriver,seoul" alt="한강에서 마주친 인연" class="w-full rounded-2xl shadow-lg">
           </div>
         </div>
         
@@ -262,7 +263,7 @@
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
               <div class="h-56 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="카페에서 만난 그대" class="story-image w-full h-full object-cover">
+                <img src="https://source.unsplash.com/featured/400x300/?cafe,seoul" alt="카페에서 만난 그대" class="story-image w-full h-full object-cover">
               </div>
               <div class="p-6">
                 <div class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
@@ -281,7 +282,7 @@
             
             <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
               <div class="h-56 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1564767609342-620cb19b2357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="기차에서의 인연" class="story-image w-full h-full object-cover">
+                <img src="https://source.unsplash.com/featured/400x300/?train,seoul" alt="기차에서의 인연" class="story-image w-full h-full object-cover">
               </div>
               <div class="p-6">
                 <div class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
@@ -300,7 +301,7 @@
             
             <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
               <div class="h-56 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1562329265-95a6d7a83440?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="공항에서의 만남" class="story-image w-full h-full object-cover">
+                <img src="https://source.unsplash.com/featured/400x300/?airport,seoul" alt="공항에서의 만남" class="story-image w-full h-full object-cover">
               </div>
               <div class="p-6">
                 <div class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
@@ -348,7 +349,7 @@
       <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-center mb-8">
           <div class="flex items-center mb-6 md:mb-0">
-            <i data-lucide="heart" class="h-6 w-6 text-pink-500 mr-2"></i>
+            <img src="https://via.placeholder.com/40/EC4899/ffffff?text=♥" alt="서비스 로고" class="h-8 w-8 mr-2">
             <h2 class="text-xl font-medium text-gray-800">다시, 봄</h2>
           </div>
           <div class="flex flex-wrap justify-center md:justify-end space-x-4 md:space-x-6">
@@ -370,19 +371,19 @@
     // Lucide 아이콘 초기화
     lucide.createIcons();
     
-    // 모바일 메뉴 토글 - 수정된 부분
+    // 모바일 메뉴 토글
     document.getElementById('mobileMenuButton').addEventListener('click', function() {
       const mobileMenu = document.getElementById('mobileMenu');
       if (mobileMenu.classList.contains('hidden')) {
         mobileMenu.classList.remove('hidden');
         this.setAttribute('aria-expanded', 'true');
         this.innerHTML = '<i data-lucide="x" class="h-6 w-6"></i>';
-        lucide.createIcons(); // 아이콘 다시 초기화
+        lucide.createIcons();
       } else {
         mobileMenu.classList.add('hidden');
         this.setAttribute('aria-expanded', 'false');
         this.innerHTML = '<i data-lucide="menu" class="h-6 w-6"></i>';
-        lucide.createIcons(); // 아이콘 다시 초기화
+        lucide.createIcons();
       }
     });
     
@@ -406,4 +407,10 @@
           const menuButton = document.getElementById('mobileMenuButton');
           menuButton.setAttribute('aria-expanded', 'false');
           menuButton.innerHTML = '<i data-lucide="menu" class="h-6 w-6"></i>';
-          lucide.createIcons(); //
+          lucide.createIcons();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

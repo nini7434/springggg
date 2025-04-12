@@ -140,7 +140,7 @@
           <a href="#" class="flex items-center py-2 text-gray-600 hover:text-pink-500">
             <i data-lucide="users" class="h-5 w-5 mr-2"></i>자유 게시판
           </a>
-          <a href="#" class="flex items-center py-2 text-pink-500 font-medium">
+          <a href="#" id="mobileLoginBtn" class="flex items-center py-2 text-pink-500 font-medium">
             <i data-lucide="log-in" class="h-5 w-5 mr-2"></i>로그인
           </a>
         </nav>
@@ -396,9 +396,6 @@
         </div>
       </div>
    <!-- 로그인/회원가입 모달 -->
-<!-- 이 코드를 </footer> 닫는 태그 바로 앞에 추가합니다 -->
-
-<!-- 로그인 모달 -->
 <div id="loginModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
   <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
     <!-- 배경 오버레이 -->
@@ -627,7 +624,8 @@
       <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i> 로그아웃
     </a>
   </div>
-</div> </footer>
+</div>
+</footer>
   </div>
   
   <script>
@@ -674,55 +672,137 @@
         }
       });
     });
+    
+    // 로그인 모달 기능
+    document.addEventListener('DOMContentLoaded', function() {
+      const headerLoginBtn = document.getElementById('headerLoginBtn');
+      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+      const loginModal = document.getElementById('loginModal');
+      const closeModalBtns = document.querySelectorAll('.closeModal');
+      
+      // 로그인 버튼 클릭 시 모달 열기
+      if (headerLoginBtn) {
+        headerLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginModal.classList.remove('hidden');
+        });
+      }
+      
+      // 모바일 로그인 버튼 클릭 시 모달 열기
+      if (mobileLoginBtn) {
+        mobileLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginModal.classList.remove('hidden');
+        });
+      }
+      
+      // 닫기 버튼 클릭 시 모달 닫기
+      closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          loginModal.classList.add('hidden');
+        });
+      });
+      
+      // 모달 외부 클릭 시 닫기
+      loginModal.addEventListener('click', function(e) {
+        if (e.target === loginModal) {
+          loginModal.classList.add('hidden');
+        }
+      });
+      
+      // 회원가입 폼 전환
+      const showSignupLink = document.getElementById('showSignup');
+      const showLoginLink = document.getElementById('showLogin');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+      const forgotPasswordLink = document.getElementById('forgotPassword');
+      const backToLoginLink = document.getElementById('backToLogin');
+      const modalTitle = document.getElementById('modal-title');
+      
+      if (showSignupLink) {
+        showSignupLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.add('hidden');
+          signupForm.classList.remove('hidden');
+          forgotPasswordForm.classList.add('hidden');
+          modalTitle.textContent = '회원가입';
+        });
+      }
+      
+      if (showLoginLink) {
+        showLoginLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+          forgotPasswordForm.classList.add('hidden');
+          modalTitle.textContent = '로그인';
+        });
+      }
+      
+      if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.add('hidden');
+          signupForm.classList.add('hidden');
+          forgotPasswordForm.classList.remove('hidden');
+          modalTitle.textContent = '비밀번호 찾기';
+        });
+      }
+      
+      if (backToLoginLink) {
+        backToLoginLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+          forgotPasswordForm.classList.add('hidden');
+          modalTitle.textContent = '로그인';
+        });
+      }
+    });
   </script>
-  <!-- 기존 스크립트 -->
-<script>
-  // Lucide 아이콘 초기화
-  lucide.createIcons();
+
+  <!-- 카카오 SDK (카카오 로그인 사용 시) -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
+  <!-- 인증 관련 스크립트 -->
+  <script type="module" src="js/auth.js"></script>
   
-  // 모바일 메뉴 토글
-  // ... 기존 코드 유지 ...
-</script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-<!-- 카카오 SDK (카카오 로그인 사용 시) -->
-<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXWLanNJmOcVG43-VPHxwEhUOruPbYM3A",
+      authDomain: "spring-again-5beef.firebaseapp.com",
+      projectId: "spring-again-5beef",
+      storageBucket: "spring-again-5beef.appspot.com",
+      messagingSenderId: "230998888543",
+      appId: "1:230998888543:web:838ddfcde96b275516cbea",
+      measurementId: "G-Q79MWQPK8J"
+    };
 
-<!-- 인증 관련 스크립트 -->
-<script type="module" src="js/auth.js"></script>
-<!-- Firebase SDK -->
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCXWLanNJmOcVG43-VPHxwEhUOruPbYM3A",
-  authDomain: "spring-again-5beef.firebaseapp.com",
-  projectId: "spring-again-5beef",
-  storageBucket: "spring-again-5beef.firebasestorage.app",
-  messagingSenderId: "230998888543",
-  appId: "1:230998888543:web:838ddfcde96b275516cbea",
-  measurementId: "G-Q79MWQPK8J"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  // Check authentication state
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in
-      console.log("User is signed in:", user.displayName);
-      // You can update UI here
-    } else {
-      // User is signed out
-      console.log("User is signed out");
-      // You can update UI here
-    }
-  });
-</script></body>
+    // Check authentication state
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        console.log("User is signed in:", user.displayName);
+        // You can update UI here
+      } else {
+        // User is signed out
+        console.log("User is signed out");
+        // You can update UI here
+      }
+    });
+  </script>
+</body>
 </html>

@@ -10,6 +10,26 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- 카카오 SDK -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script>
+    // 페이지 로드 전에 카카오 SDK 초기화
+    window.kakaoInit = function() {
+      if (typeof Kakao !== 'undefined') {
+        if (!Kakao.isInitialized()) {
+          Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
+        }
+        console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
+      } else {
+        console.error('카카오 SDK가 로드되지 않았습니다');
+      }
+    };
+    
+    // 페이지 로드 완료 시 초기화 실행
+    window.addEventListener('load', function() {
+      window.kakaoInit();
+    });
+  </script>
   <style>
     body {
       font-family: 'NanumSquareNeo-Variable', sans-serif;
@@ -674,9 +694,6 @@
     });
   </script>
 
-  <!-- 카카오 SDK (카카오 로그인 사용 시) -->
-  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-
   <!-- Firebase 및 인증 관련 스크립트 -->
   <script type="module">
     // Firebase 초기화
@@ -733,6 +750,11 @@
     // 구글 로그인
     async function loginWithGoogle() {
       try {
+        // 팝업이 차단되는 것을 방지하기 위해 GoogleAuthProvider 설정
+        googleProvider.setCustomParameters({
+          prompt: 'select_account'
+        });
+        
         const result = await signInWithPopup(auth, googleProvider);
         console.log('구글 로그인 성공:', result.user);
         
@@ -840,10 +862,19 @@
         case 'auth/too-many-requests':
           message = '너무 많은 요청이 있었습니다. 잠시 후 다시 시도해주세요.';
           break;
+        case 'auth/popup-closed-by-user':
+          message = '팝업이 사용자에 의해 닫혔습니다. 다시 시도해주세요.';
+          break;
+        case 'auth/popup-blocked':
+          message = '팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.';
+          break;
+        case 'auth/cancelled-popup-request':
+          message = '이미 진행 중인 팝업 요청이 있습니다.';
+          break;
       }
       
       alert(message);
-      console.error(error);
+      console.error('Auth Error:', error.code, error.message);
     }
 
     // 인증 상태 변경 감지
@@ -886,6 +917,11 @@
 
     // DOM이 로드된 후 이벤트 리스너 연결
     document.addEventListener('DOMContentLoaded', function() {
+      // 카카오 초기화 확인
+      if (window.kakaoInit) {
+        window.kakaoInit();
+      }
+      
       // 로그인 모달 열기/닫기
       const headerLoginBtn = document.getElementById('headerLoginBtn');
       const mobileLoginBtn = document.getElementById('mobileLoginBtn');
@@ -995,6 +1031,7 @@
       if (googleLoginBtn) {
         googleLoginBtn.addEventListener('click', async function() {
           try {
+            console.log('구글 로그인 시작');
             await loginWithGoogle();
             loginModal.classList.add('hidden');
           } catch (error) {
@@ -1025,134 +1062,3 @@
           const password = document.getElementById('signup-password').value;
           const passwordConfirm = document.getElementById('signup-password-confirm').value;
           const terms = document.getElementById('terms').checked;
-          
-          if (!name || !email || !password) {
-            alert('모든 필수 정보를 입력해주세요');
-            return;
-          }
-          
-          if (password !== passwordConfirm) {
-            alert('비밀번호가 일치하지 않습니다');
-            return;
-          }
-          
-          if (!terms) {
-            alert('이용약관에 동의해주세요');
-            return;
-          }
-          
-          try {
-            await registerWithEmail(name, email, password);
-            loginModal.classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 비밀번호 재설정
-      const resetPasswordButton = document.getElementById('resetPasswordButton');
-      if (resetPasswordButton) {
-        resetPasswordButton.addEventListener('click', async function() {
-          const email = document.getElementById('reset-email').value;
-          
-          if (!email) {
-            alert('이메일을 입력해주세요');
-            return;
-          }
-          
-          try {
-            await resetPassword(email);
-            alert('비밀번호 재설정 이메일이 발송되었습니다');
-            loginForm.classList.remove('hidden');
-            forgotPasswordForm.classList.add('hidden');
-            modalTitle.textContent = '로그인';
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 로그아웃
-      const logoutBtn = document.getElementById('logoutBtn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', async function(e) {
-          e.preventDefault();
-          try {
-            await logoutUser();
-            const profileDropdownMenu = document.getElementById('profileDropdownMenu');
-            if (profileDropdownMenu) profileDropdownMenu.classList.add('hidden');
-          } catch (error) {
-            console.error('로그아웃 에러:', error);
-          }
-        });
-      }
-      
-      // 사용자 프로필 드롭다운 메뉴
-      const userProfileBtn = document.getElementById('userProfileBtn');
-      const profileDropdownMenu = document.getElementById('profileDropdownMenu');
-      
-      if (userProfileBtn && profileDropdownMenu) {
-        userProfileBtn.addEventListener('click', function() {
-          profileDropdownMenu.classList.toggle('hidden');
-        });
-        
-        // 드롭다운 외부 클릭 시 닫기
-        document.addEventListener('click', function(e) {
-          if (userProfileBtn && profileDropdownMenu && 
-              !userProfileBtn.contains(e.target) && 
-              !profileDropdownMenu.contains(e.target)) {
-            profileDropdownMenu.classList.add('hidden');
-          }
-        });
-      }
-      
-      // 카카오 SDK 초기화
-      if (typeof Kakao !== 'undefined') {
-        // 올바른 JavaScript 키로 초기화
-        Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
-        console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
-      }
-      
-      // 카카오 로그인
-      const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
-      if (kakaoLoginBtn) {
-        kakaoLoginBtn.addEventListener('click', function() {
-          if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
-            alert('카카오 SDK가 초기화되지 않았습니다');
-            return;
-          }
-          
-          Kakao.Auth.login({
-            success: function(authObj) {
-              // 카카오 사용자 정보 요청
-              Kakao.API.request({
-                url: '/v2/user/me',
-                success: function(res) {
-                  console.log('카카오 로그인 성공:', res);
-                  alert(`카카오 로그인 성공: ${res.properties.nickname}님 환영합니다!`);
-                  loginModal.classList.add('hidden');
-                  // Firebase 커스텀 인증이 필요합니다 (별도 서버 필요)
-                },
-                fail: function(error) {
-                  console.error('카카오 사용자 정보 요청 실패:', error);
-                  alert('사용자 정보를 가져오는데 실패했습니다');
-                }
-              });
-            },
-            fail: function(err) {
-              console.error('카카오 로그인 실패:', err);
-              alert('카카오 로그인에 실패했습니다');
-            }
-          });
-        });
-      }
-      
-      // 카카오 회원가입 (카카오 로그인과 동일)
-      const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
-      if (kakaoSignupBtn) {
-        kakaoSignupBtn.addEventListener('click', function() {
-          if (kakaoLoginBtn) kakaoLoginBtn.click();
-        });
-      }
-    });

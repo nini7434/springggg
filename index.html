@@ -12,24 +12,6 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- 카카오 SDK -->
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-  <script>
-    // 페이지 로드 전에 카카오 SDK 초기화
-    window.kakaoInit = function() {
-      if (typeof Kakao !== 'undefined') {
-        if (!Kakao.isInitialized()) {
-          Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
-        }
-        console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
-      } else {
-        console.error('카카오 SDK가 로드되지 않았습니다');
-      }
-    };
-    
-    // 페이지 로드 완료 시 초기화 실행
-    window.addEventListener('load', function() {
-      window.kakaoInit();
-    });
-  </script>
   <style>
     body {
       font-family: 'NanumSquareNeo-Variable', sans-serif;
@@ -119,28 +101,6 @@
       100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
     }
   </style>
-  <script>
-window.onload = function() {
-  console.log("페이지 로드됨");
-  
-  // 직접 테스트용 이벤트 리스너
-  document.addEventListener('click', function(e) {
-    console.log('클릭 이벤트 발생:', e.target);
-  });
-
-  // 헤더 로그인 버튼 테스트
-  const headerLoginBtn = document.getElementById('headerLoginBtn');
-  if (headerLoginBtn) {
-    console.log('헤더 로그인 버튼 찾음');
-    headerLoginBtn.addEventListener('click', function() {
-      console.log('헤더 로그인 버튼 클릭됨');
-      alert('로그인 버튼 클릭!');
-    });
-  } else {
-    console.log('헤더 로그인 버튼을 찾을 수 없음');
-  }
-}
-</script>
 </head>
 <body>
   <div class="min-h-screen flex flex-col">
@@ -714,6 +674,147 @@ window.onload = function() {
         }
       });
     });
+
+    // 페이지 로드 완료 시 카카오 SDK 초기화
+    window.addEventListener('load', function() {
+      // 카카오 SDK 초기화
+      if (typeof Kakao !== 'undefined') {
+        if (!Kakao.isInitialized()) {
+          Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
+        }
+        console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
+      } else {
+        console.error('카카오 SDK가 로드되지 않았습니다');
+      }
+    });
+
+    // 로그인 모달 관련 코드
+    document.addEventListener('DOMContentLoaded', function() {
+      // 로그인 모달 열기/닫기
+      const headerLoginBtn = document.getElementById('headerLoginBtn');
+      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+      const loginModal = document.getElementById('loginModal');
+      const closeModalBtns = document.querySelectorAll('.closeModal');
+      
+      if (headerLoginBtn) {
+        headerLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginModal.classList.remove('hidden');
+        });
+      }
+      
+      if (mobileLoginBtn) {
+        mobileLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginModal.classList.remove('hidden');
+        });
+      }
+      
+      closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          loginModal.classList.add('hidden');
+        });
+      });
+      
+      // 모달 외부 클릭 시 닫기
+      loginModal.addEventListener('click', function(e) {
+        if (e.target === loginModal) {
+          loginModal.classList.add('hidden');
+        }
+      });
+      
+      // 회원가입 폼 전환
+      const showSignupLink = document.getElementById('showSignup');
+      const showLoginLink = document.getElementById('showLogin');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+      const forgotPasswordLink = document.getElementById('forgotPassword');
+      const backToLoginLink = document.getElementById('backToLogin');
+      const modalTitle = document.getElementById('modal-title');
+      
+      if (showSignupLink) {
+        showSignupLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.add('hidden');
+          signupForm.classList.remove('hidden');
+          forgotPasswordForm.classList.add('hidden');
+          modalTitle.textContent = '회원가입';
+        });
+      }
+      
+      if (showLoginLink) {
+        showLoginLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+          forgotPasswordForm.classList.add('hidden');
+          modalTitle.textContent = '로그인';
+        });
+      }
+      
+      if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.add('hidden');
+          signupForm.classList.add('hidden');
+          forgotPasswordForm.classList.remove('hidden');
+          modalTitle.textContent = '비밀번호 찾기';
+        });
+      }
+      
+      if (backToLoginLink) {
+        backToLoginLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+          forgotPasswordForm.classList.add('hidden');
+          modalTitle.textContent = '로그인';
+        });
+      }
+
+      // 카카오 로그인
+      const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
+      if (kakaoLoginBtn) {
+        kakaoLoginBtn.addEventListener('click', function() {
+          if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
+            alert('카카오 SDK가 초기화되지 않았습니다');
+            return;
+          }
+          
+          Kakao.Auth.login({
+            success: function(authObj) {
+              // 카카오 사용자 정보 요청
+              Kakao.API.request({
+                url: '/v2/user/me',
+                success: function(res) {
+                  console.log('카카오 로그인 성공:', res);
+                  alert(`카카오 로그인 성공: ${res.properties.nickname}님 환영합니다!`);
+                  loginModal.classList.add('hidden');
+                  // Firebase 커스텀 인증이 필요합니다 (별도 서버 필요)
+                },
+                fail: function(error) {
+                  console.error('카카오 사용자 정보 요청 실패:', error);
+                  alert('사용자 정보를 가져오는데 실패했습니다');
+                }
+              });
+            },
+            fail: function(err) {
+              console.error('카카오 로그인 실패:', err);
+              alert('카카오 로그인에 실패했습니다');
+            }
+          });
+        });
+      }
+      
+      // 카카오 회원가입 (카카오 로그인과 동일)
+      const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
+      if (kakaoSignupBtn) {
+        kakaoSignupBtn.addEventListener('click', function() {
+          if (kakaoLoginBtn) kakaoLoginBtn.click();
+        });
+      }
+    });
   </script>
 
   <!-- Firebase 및 인증 관련 스크립트 -->
@@ -937,96 +1038,8 @@ window.onload = function() {
       }
     });
 
-    // DOM이 로드된 후 이벤트 리스너 연결
+    // DOM 로드 완료 후 이벤트 연결
     document.addEventListener('DOMContentLoaded', function() {
-      // 카카오 초기화 확인
-      if (window.kakaoInit) {
-        window.kakaoInit();
-      }
-      
-      // 로그인 모달 열기/닫기
-      const headerLoginBtn = document.getElementById('headerLoginBtn');
-      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-      const loginModal = document.getElementById('loginModal');
-      const closeModalBtns = document.querySelectorAll('.closeModal');
-      
-      if (headerLoginBtn) {
-        headerLoginBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginModal.classList.remove('hidden');
-        });
-      }
-      
-      if (mobileLoginBtn) {
-        mobileLoginBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginModal.classList.remove('hidden');
-        });
-      }
-      
-      closeModalBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-          loginModal.classList.add('hidden');
-        });
-      });
-      
-      // 모달 외부 클릭 시 닫기
-      loginModal.addEventListener('click', function(e) {
-        if (e.target === loginModal) {
-          loginModal.classList.add('hidden');
-        }
-      });
-      
-      // 회원가입 폼 전환
-      const showSignupLink = document.getElementById('showSignup');
-      const showLoginLink = document.getElementById('showLogin');
-      const loginForm = document.getElementById('loginForm');
-      const signupForm = document.getElementById('signupForm');
-      const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-      const forgotPasswordLink = document.getElementById('forgotPassword');
-      const backToLoginLink = document.getElementById('backToLogin');
-      const modalTitle = document.getElementById('modal-title');
-      
-      if (showSignupLink) {
-        showSignupLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.add('hidden');
-          signupForm.classList.remove('hidden');
-          forgotPasswordForm.classList.add('hidden');
-          modalTitle.textContent = '회원가입';
-        });
-      }
-      
-      if (showLoginLink) {
-        showLoginLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.remove('hidden');
-          signupForm.classList.add('hidden');
-          forgotPasswordForm.classList.add('hidden');
-          modalTitle.textContent = '로그인';
-        });
-      }
-      
-      if (forgotPasswordLink) {
-        forgotPasswordLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.add('hidden');
-          signupForm.classList.add('hidden');
-          forgotPasswordForm.classList.remove('hidden');
-          modalTitle.textContent = '비밀번호 찾기';
-        });
-      }
-      
-      if (backToLoginLink) {
-        backToLoginLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.remove('hidden');
-          signupForm.classList.add('hidden');
-          forgotPasswordForm.classList.add('hidden');
-          modalTitle.textContent = '로그인';
-        });
-      }
-      
       // 이메일/비밀번호 로그인
       const loginButton = document.getElementById('loginButton');
       if (loginButton) {
@@ -1035,52 +1048,3 @@ window.onload = function() {
           const password = document.getElementById('password').value;
           
           if (!email || !password) {
-            alert('이메일과 비밀번호를 모두 입력해주세요');
-            return;
-          }
-          
-          try {
-            await loginWithEmail(email, password);
-            loginModal.classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 구글 로그인
-      const googleLoginBtn = document.getElementById('googleLoginBtn');
-      if (googleLoginBtn) {
-        googleLoginBtn.addEventListener('click', async function() {
-          try {
-            console.log('구글 로그인 시작');
-            await loginWithGoogle();
-            loginModal.classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 구글 회원가입
-      const googleSignupBtn = document.getElementById('googleSignupBtn');
-      if (googleSignupBtn) {
-        googleSignupBtn.addEventListener('click', async function() {
-          try {
-            await loginWithGoogle();
-            loginModal.classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 이메일/비밀번호 회원가입
-      const signupButton = document.getElementById('signupButton');
-      if (signupButton) {
-        signupButton.addEventListener('click', async function() {
-          const name = document.getElementById('signup-name').value;
-          const email = document.getElementById('signup-email').value;
-          const password = document.getElementById('signup-password').value;
-          const passwordConfirm = document.getElementById('signup-password-confirm').value;
-          const terms = document.getElementById('terms').checked;

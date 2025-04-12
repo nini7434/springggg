@@ -395,7 +395,239 @@
           <p class="text-xs text-gray-500">&copy; 2025 다시, 봄. All rights reserved.</p>
         </div>
       </div>
-    </footer>
+   <!-- 로그인/회원가입 모달 -->
+<!-- 이 코드를 </footer> 닫는 태그 바로 앞에 추가합니다 -->
+
+<!-- 로그인 모달 -->
+<div id="loginModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <!-- 배경 오버레이 -->
+    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+    
+    <!-- 모달 중앙 정렬 트릭 -->
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+    <!-- 모달 내용 -->
+    <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+            <!-- 모달 헤더 -->
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-2xl font-medium leading-6 text-gray-900" id="modal-title">
+                로그인
+              </h3>
+              <button type="button" class="closeModal text-gray-400 hover:text-gray-500 focus:outline-none">
+                <i data-lucide="x" class="w-6 h-6"></i>
+              </button>
+            </div>
+            
+            <!-- 모달 내용 -->
+            <div class="mt-2">
+              <!-- 로그인 폼 -->
+              <div id="loginForm">
+                <p class="mb-6 text-gray-600">다시, 봄에 오신 것을 환영합니다. 소중한 인연을 찾기 위해 로그인해주세요.</p>
+                
+                <div class="space-y-4">
+                  <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">이메일</label>
+                    <input type="email" id="email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
+                  </div>
+                  
+                  <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">비밀번호</label>
+                    <input type="password" id="password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호" required>
+                  </div>
+                  
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <input id="remember-me" name="remember-me" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500">
+                      <label for="remember-me" class="block ml-2 text-sm text-gray-700">
+                        로그인 상태 유지
+                      </label>
+                    </div>
+                    
+                    <div class="text-sm">
+                      <a href="#" id="forgotPassword" class="font-medium text-pink-600 hover:text-pink-500">
+                        비밀번호 찾기
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <button type="button" id="loginButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                      로그인
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="mt-6">
+                  <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                      <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                      <span class="px-2 text-gray-500 bg-white">또는</span>
+                    </div>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 gap-3 mt-6">
+                    <button type="button" id="googleLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
+                      Google 계정으로 로그인
+                    </button>
+                    
+                    <button type="button" id="kakaoLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
+                      카카오로 시작하기
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                  <p class="text-sm text-gray-600">
+                    아직 회원이 아니신가요?
+                    <a href="#" id="showSignup" class="font-medium text-pink-600 hover:text-pink-500">
+                      회원가입
+                    </a>
+                  </p>
+                </div>
+              </div>
+              
+              <!-- 회원가입 폼 (처음에는 숨김) -->
+              <div id="signupForm" class="hidden">
+                <p class="mb-6 text-gray-600">다시, 봄에서 소중한 인연을 찾기 위한 첫 걸음을 시작하세요.</p>
+                
+                <div class="space-y-4">
+                  <div>
+                    <label for="signup-name" class="block text-sm font-medium text-gray-700">이름</label>
+                    <input type="text" id="signup-name" name="name" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이름" required>
+                  </div>
+                  
+                  <div>
+                    <label for="signup-email" class="block text-sm font-medium text-gray-700">이메일</label>
+                    <input type="email" id="signup-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
+                  </div>
+                  
+                  <div>
+                    <label for="signup-password" class="block text-sm font-medium text-gray-700">비밀번호</label>
+                    <input type="password" id="signup-password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 (8자 이상)" minlength="8" required>
+                  </div>
+                  
+                  <div>
+                    <label for="signup-password-confirm" class="block text-sm font-medium text-gray-700">비밀번호 확인</label>
+                    <input type="password" id="signup-password-confirm" name="password-confirm" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 확인" minlength="8" required>
+                  </div>
+                  
+                  <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                      <input id="terms" name="terms" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500" required>
+                    </div>
+                    <div class="ml-3 text-sm">
+                      <label for="terms" class="font-medium text-gray-700">
+                        <a href="#" class="text-pink-600 hover:text-pink-500">이용약관</a> 및 
+                        <a href="#" class="text-pink-600 hover:text-pink-500">개인정보처리방침</a>에 동의합니다.
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <button type="button" id="signupButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                      회원가입
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="mt-6">
+                  <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                      <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                      <span class="px-2 text-gray-500 bg-white">또는</span>
+                    </div>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 gap-3 mt-6">
+                    <button type="button" id="googleSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
+                      Google 계정으로 회원가입
+                    </button>
+                    
+                    <button type="button" id="kakaoSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
+                      카카오로 시작하기
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                  <p class="text-sm text-gray-600">
+                    이미 회원이신가요?
+                    <a href="#" id="showLogin" class="font-medium text-pink-600 hover:text-pink-500">
+                      로그인
+                    </a>
+                  </p>
+                </div>
+              </div>
+              
+              <!-- 비밀번호 찾기 폼 (처음에는 숨김) -->
+              <div id="forgotPasswordForm" class="hidden">
+                <p class="mb-6 text-gray-600">가입한 이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
+                
+                <div class="space-y-4">
+                  <div>
+                    <label for="reset-email" class="block text-sm font-medium text-gray-700">이메일</label>
+                    <input type="email" id="reset-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="가입한 이메일 주소" required>
+                  </div>
+                  
+                  <div>
+                    <button type="button" id="resetPasswordButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                      비밀번호 재설정 링크 보내기
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                  <p class="text-sm text-gray-600">
+                    <a href="#" id="backToLogin" class="font-medium text-pink-600 hover:text-pink-500">
+                      로그인으로 돌아가기
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 로그인 상태 확인 및 사용자 프로필 -->
+<div id="userProfileDropdown" class="hidden relative">
+  <button id="userProfileBtn" class="flex items-center focus:outline-none">
+    <img id="userAvatarImg" src="https://via.placeholder.com/36/EC4899/ffffff?text=U" alt="프로필 사진" class="w-8 h-8 rounded-full border-2 border-pink-400">
+    <span id="userDisplayName" class="ml-2 text-gray-700 hidden md:inline"></span>
+    <i data-lucide="chevron-down" class="w-4 h-4 ml-1 text-gray-600"></i>
+  </button>
+  
+  <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+    <a href="#" id="myProfileLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="user" class="w-4 h-4 inline-block mr-2"></i> 내 프로필
+    </a>
+    <a href="#" id="myPostsLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="file-text" class="w-4 h-4 inline-block mr-2"></i> 내 글 목록
+    </a>
+    <a href="#" id="favoritesLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="heart" class="w-4 h-4 inline-block mr-2"></i> 관심 목록
+    </a>
+    <hr class="my-1 border-gray-200">
+    <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i> 로그아웃
+    </a>
+  </div>
+</div> </footer>
   </div>
   
   <script>

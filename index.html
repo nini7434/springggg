@@ -116,7 +116,7 @@
           <a href="#features" class="text-gray-600 hover:text-pink-500 transition-colors">기능</a>
           <a href="#stories" class="text-gray-600 hover:text-pink-500 transition-colors">실제 이야기</a>
           <a href="#" class="text-gray-600 hover:text-pink-500 transition-colors">자유 게시판</a>
-          <a href="#" class="px-5 py-2 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-full shadow-md hover:shadow-xl transition-all hover:scale-105">
+          <a href="#" id="headerLoginBtn" class="px-5 py-2 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-full shadow-md hover:shadow-xl transition-all hover:scale-105">
             로그인
           </a>
         </nav>
@@ -675,6 +675,20 @@
       });
     });
   </script>
+  <!-- 기존 스크립트 -->
+<script>
+  // Lucide 아이콘 초기화
+  lucide.createIcons();
+  
+  // 모바일 메뉴 토글
+  // ... 기존 코드 유지 ...
+</script>
+
+<!-- 카카오 SDK (카카오 로그인 사용 시) -->
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
+<!-- 인증 관련 스크립트 -->
+<script type="module" src="js/auth.js"></script>
 <!-- Firebase SDK -->
 <script type="module">
   // Import the functions you need from the SDKs you need

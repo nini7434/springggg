@@ -52,12 +52,15 @@
       transform: scale(1.05);
     }
     
-    /* 반응형 영상 컨테이너 (추후 영상 추가 시 사용 예정) */
+    /* 반응형 영상 컨테이너 */
     .responsive-video-container {
       position: relative;
       padding-bottom: 56.25%;
       padding-top: 25px;
       height: 0;
+      overflow: hidden;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
     .responsive-video-container iframe {
       position: absolute;
@@ -65,6 +68,7 @@
       left: 0;
       width: 100%;
       height: 100%;
+      border-radius: 1rem;
     }
     
     .floating {
@@ -176,10 +180,18 @@
             </div>
           </div>
           
-          <!-- Illustrative image (수정된 버전) -->
-          <div class="max-w-5xl mx-auto mt-16 hidden md:block">
-            <!-- 안정적인 이미지 URL 사용 또는 직접 업로드한 이미지를 사용 -->
-            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="한강에서 마주친 인연" class="w-full rounded-2xl shadow-lg">
+          <!-- 유튜브 영상 추가 (이미지 대신) -->
+          <div class="max-w-5xl mx-auto mt-16">
+            <div class="responsive-video-container">
+              <iframe 
+                src="https://www.youtube.com/embed/MZhbRkEOBtY?controls=0&showinfo=0&rel=0&autoplay=0&loop=1&mute=1"
+                title="이산가족 상봉 영상" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+            <p class="text-sm text-gray-500 mt-3 text-center">소중한 사람과의 재회, 그 감동적인 순간</p>
           </div>
         </div>
         
@@ -279,15 +291,15 @@
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
               <div class="h-56 overflow-hidden">
-                <img src="https://source.unsplash.com/featured/400x300/?cafe,seoul" alt="카페에서 만난 그대" class="story-image w-full h-full object-cover">
+                <img src="https://claude-image-files.antropic.com/8d59e96a-22a9-4493-8b24-37f07ee4d4e1.jpg" alt="용산역 스타벅스" class="story-image w-full h-full object-cover">
               </div>
               <div class="p-6">
                 <div class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
-                  카페에서 만난 그대
+                  용산역 스타벅스에서
                 </div>
-                <p class="text-gray-700 mb-6">우연히 같은 카페에서 책을 읽던 그 분. 짧은 대화 후 연락처를 교환하지 못했는데, 다시 봄을 통해 8개월 만에 다시 만났습니다.</p>
+                <p class="text-gray-700 mb-6">2019년 용산역 기차를 기다리는 스타벅스에서 마주쳤던 그 여자. 같은 책을 읽고 있었던 우연한 만남, 다시 봄을 통해 1년 만에 다시 만났습니다.</p>
                 <div class="flex justify-between items-center">
-                  <p class="text-sm text-gray-600">미나, 28세</p>
+                  <p class="text-sm text-gray-600">민준, 31세</p>
                   <div class="flex items-center text-pink-400">
                     <i data-lucide="heart" class="h-4 w-4 mr-1 fill-current"></i>
                     <span class="text-xs">128</span>
@@ -298,15 +310,15 @@
             
             <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
               <div class="h-56 overflow-hidden">
-                <img src="https://source.unsplash.com/featured/400x300/?train,seoul" alt="기차에서의 인연" class="story-image w-full h-full object-cover">
+                <img src="https://claude-image-files.antropic.com/0c5e38a0-3e95-4911-818e-e3e6950feb0a.jpg" alt="강남역 출구" class="story-image w-full h-full object-cover">
               </div>
               <div class="p-6">
                 <div class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
-                  기차에서의 인연
+                  강남역에서의 인연
                 </div>
-                <p class="text-gray-700 mb-6">부산에서 서울로 가는 기차에서 옆자리에 앉았던 그 분. 대화가 너무 즐거웠는데 역에 도착하며 헤어졌습니다. 6개월 후 다시 봄에서 서로를 찾았어요.</p>
+                <p class="text-gray-700 mb-6">2023년에 강남역에서 매일 출근 시간에 마주쳤던 그 남자. 항상 같은 시간에 2번 출구로 나가던 그를 6개월 만에 다시 봄에서 찾았어요.</p>
                 <div class="flex justify-between items-center">
-                  <p class="text-sm text-gray-600">준호, 34세</p>
+                  <p class="text-sm text-gray-600">서연, 27세</p>
                   <div class="flex items-center text-pink-400">
                     <i data-lucide="heart" class="h-4 w-4 mr-1 fill-current"></i>
                     <span class="text-xs">95</span>
@@ -317,13 +329,13 @@
             
             <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
               <div class="h-56 overflow-hidden">
-                <img src="https://source.unsplash.com/featured/400x300/?airport,seoul" alt="공항에서의 만남" class="story-image w-full h-full object-cover">
+                <img src="https://claude-image-files.antropic.com/8e01fb42-7642-4fde-9b01-38d34c62ccc1.jpg" alt="인천공항 대기실" class="story-image w-full h-full object-cover">
               </div>
               <div class="p-6">
                 <div class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
-                  공항에서의 만남
+                  인천공항에서의 만남
                 </div>
-                <p class="text-gray-700 mb-6">제주행 비행기가 지연되던 날, 우연히 커피숍에서 대화를 나눴던 그 분을 1년 만에 다시 만났습니다. 이제는 함께 여행을 다니는 사이가 되었어요.</p>
+                <p class="text-gray-700 mb-6">2021년 인천공항에서 일본으로 가는 아침 비행기에서 어깨를 빌려주며 이야기 나눴던 그 남자. 8개월 후 우연히 다시 봄에서 서로를 발견했어요.</p>
                 <div class="flex justify-between items-center">
                   <p class="text-sm text-gray-600">지현, 26세</p>
                   <div class="flex items-center text-pink-400">

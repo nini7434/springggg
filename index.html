@@ -672,15 +672,226 @@
         }
       });
     });
-    
-    // 로그인 모달 기능
+  </script>
+
+  <!-- 카카오 SDK (카카오 로그인 사용 시) -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
+  <!-- Firebase 및 인증 관련 스크립트 -->
+  <script type="module">
+    // Firebase 초기화
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider,
+      signOut,
+      sendPasswordResetEmail,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc,
+      getDoc,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    // Firebase 구성 정보
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXWLanNJmOcVG43-VPHxwEhUOruPbYM3A",
+      authDomain: "spring-again-5beef.firebaseapp.com",
+      projectId: "spring-again-5beef",
+      storageBucket: "spring-again-5beef.appspot.com",
+      messagingSenderId: "230998888543",
+      appId: "1:230998888543:web:838ddfcde96b275516cbea",
+      measurementId: "G-Q79MWQPK8J"
+    };
+
+    // Firebase 초기화
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // 인증 함수들
+    // 이메일/비밀번호 로그인
+    async function loginWithEmail(email, password) {
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('로그인 성공:', userCredential.user);
+        return userCredential.user;
+      } catch (error) {
+        console.error('로그인 에러:', error);
+        throw error;
+      }
+    }
+
+    // 구글 로그인
+    async function loginWithGoogle() {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        console.log('구글 로그인 성공:', result.user);
+        
+        // 사용자 정보 Firestore에 저장
+        await saveUserToFirestore(result.user);
+        
+        return result.user;
+      } catch (error) {
+        console.error('구글 로그인 에러:', error);
+        throw error;
+      }
+    }
+
+    // 회원가입
+    async function registerWithEmail(name, email, password) {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // 사용자 정보 업데이트 (이름 추가)
+        await updateProfile(userCredential.user, {
+          displayName: name
+        });
+        
+        // 사용자 정보 Firestore에 저장
+        await saveUserToFirestore(userCredential.user);
+        
+        console.log('회원가입 성공:', userCredential.user);
+        return userCredential.user;
+      } catch (error) {
+        console.error('회원가입 에러:', error);
+        throw error;
+      }
+    }
+
+    // 로그아웃
+    async function logoutUser() {
+      try {
+        await signOut(auth);
+        console.log('로그아웃 성공');
+      } catch (error) {
+        console.error('로그아웃 에러:', error);
+        throw error;
+      }
+    }
+
+    // 비밀번호 재설정 이메일 보내기
+    async function resetPassword(email) {
+      try {
+        await sendPasswordResetEmail(auth, email);
+        console.log('비밀번호 재설정 이메일 발송됨');
+      } catch (error) {
+        console.error('비밀번호 재설정 에러:', error);
+        throw error;
+      }
+    }
+
+    // 사용자 정보를 Firestore에 저장
+    async function saveUserToFirestore(user) {
+      if (!user) return;
+      
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        const userData = {
+          displayName: user.displayName || '',
+          email: user.email || '',
+          photoURL: user.photoURL || '',
+          lastLogin: serverTimestamp()
+        };
+        
+        if (!userSnap.exists()) {
+          // 새 사용자
+          userData.createdAt = serverTimestamp();
+        }
+        
+        await setDoc(userRef, userData, { merge: true });
+        console.log('사용자 정보 저장됨');
+      } catch (error) {
+        console.error('사용자 정보 저장 에러:', error);
+      }
+    }
+
+    // 인증 오류 처리
+    function handleAuthError(error) {
+      let message = '오류가 발생했습니다. 다시 시도해주세요.';
+      
+      switch (error.code) {
+        case 'auth/invalid-email':
+          message = '유효하지 않은 이메일 형식입니다.';
+          break;
+        case 'auth/user-disabled':
+          message = '계정이 비활성화되었습니다.';
+          break;
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          message = '이메일 또는 비밀번호가 올바르지 않습니다.';
+          break;
+        case 'auth/email-already-in-use':
+          message = '이미 가입된 이메일입니다.';
+          break;
+        case 'auth/weak-password':
+          message = '비밀번호는 최소 6자 이상이어야 합니다.';
+          break;
+        case 'auth/too-many-requests':
+          message = '너무 많은 요청이 있었습니다. 잠시 후 다시 시도해주세요.';
+          break;
+      }
+      
+      alert(message);
+      console.error(error);
+    }
+
+    // 인증 상태 변경 감지
+    onAuthStateChanged(auth, (user) => {
+      const userProfileDropdown = document.getElementById('userProfileDropdown');
+      const headerLoginBtn = document.getElementById('headerLoginBtn');
+      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+      const userDisplayName = document.getElementById('userDisplayName');
+      const userAvatarImg = document.getElementById('userAvatarImg');
+
+      if (user) {
+        // 로그인 상태
+        console.log("User is signed in:", user.displayName);
+        
+        // UI 업데이트
+        if (headerLoginBtn) headerLoginBtn.classList.add('hidden');
+        if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
+        if (userProfileDropdown) userProfileDropdown.classList.remove('hidden');
+        
+        // 사용자 정보 표시
+        if (userDisplayName) userDisplayName.textContent = user.displayName || '사용자';
+        if (userAvatarImg) {
+          if (user.photoURL) {
+            userAvatarImg.src = user.photoURL;
+          } else {
+            const initial = (user.displayName || '사용자')[0].toUpperCase();
+            userAvatarImg.src = `https://via.placeholder.com/36/EC4899/ffffff?text=${initial}`;
+          }
+        }
+      } else {
+        // 로그아웃 상태
+        console.log("User is signed out");
+        
+        // UI 업데이트
+        if (headerLoginBtn) headerLoginBtn.classList.remove('hidden');
+        if (mobileLoginBtn) mobileLoginBtn.classList.remove('hidden');
+        if (userProfileDropdown) userProfileDropdown.classList.add('hidden');
+      }
+    });
+
+    // DOM이 로드된 후 이벤트 리스너 연결
     document.addEventListener('DOMContentLoaded', function() {
+      // 로그인 모달 열기/닫기
       const headerLoginBtn = document.getElementById('headerLoginBtn');
       const mobileLoginBtn = document.getElementById('mobileLoginBtn');
       const loginModal = document.getElementById('loginModal');
       const closeModalBtns = document.querySelectorAll('.closeModal');
       
-      // 로그인 버튼 클릭 시 모달 열기
       if (headerLoginBtn) {
         headerLoginBtn.addEventListener('click', function(e) {
           e.preventDefault();
@@ -688,7 +899,6 @@
         });
       }
       
-      // 모바일 로그인 버튼 클릭 시 모달 열기
       if (mobileLoginBtn) {
         mobileLoginBtn.addEventListener('click', function(e) {
           e.preventDefault();
@@ -696,7 +906,6 @@
         });
       }
       
-      // 닫기 버튼 클릭 시 모달 닫기
       closeModalBtns.forEach(btn => {
         btn.addEventListener('click', function() {
           loginModal.classList.add('hidden');
@@ -759,135 +968,154 @@
           modalTitle.textContent = '로그인';
         });
       }
-
-      // 로그인 기능 연결
-      const loginButton = document.getElementById('loginButton');
-      const googleLoginBtn = document.getElementById('googleLoginBtn');
-      const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
-      const signupButton = document.getElementById('signupButton');
-      const googleSignupBtn = document.getElementById('googleSignupBtn');
-      const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
-      const resetPasswordButton = document.getElementById('resetPasswordButton');
-      const logoutBtn = document.getElementById('logoutBtn');
       
-      // auth.js에서 함수 임포트
-      import('./js/auth.js').then((authModule) => {
-        // 이메일/비밀번호 로그인
-        if (loginButton) {
-          loginButton.addEventListener('click', async function() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            if (!email || !password) {
-              alert('이메일과 비밀번호를 모두 입력해주세요');
-              return;
-            }
-            
-            try {
-              await authModule.loginWithEmail(email, password);
-              document.getElementById('loginModal').classList.add('hidden');
-            } catch (error) {
-              handleAuthError(error);
-            }
-          });
-        }
+      // 이메일/비밀번호 로그인
+      const loginButton = document.getElementById('loginButton');
+      if (loginButton) {
+        loginButton.addEventListener('click', async function() {
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          
+          if (!email || !password) {
+            alert('이메일과 비밀번호를 모두 입력해주세요');
+            return;
+          }
+          
+          try {
+            await loginWithEmail(email, password);
+            loginModal.classList.add('hidden');
+          } catch (error) {
+            handleAuthError(error);
+          }
+        });
+      }
+      
+      // 구글 로그인
+      const googleLoginBtn = document.getElementById('googleLoginBtn');
+      if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', async function() {
+          try {
+            await loginWithGoogle();
+            loginModal.classList.add('hidden');
+          } catch (error) {
+            handleAuthError(error);
+          }
+        });
+      }
+      
+      // 구글 회원가입
+      const googleSignupBtn = document.getElementById('googleSignupBtn');
+      if (googleSignupBtn) {
+        googleSignupBtn.addEventListener('click', async function() {
+          try {
+            await loginWithGoogle();
+            loginModal.classList.add('hidden');
+          } catch (error) {
+            handleAuthError(error);
+          }
+        });
+      }
+      
+      // 이메일/비밀번호 회원가입
+      const signupButton = document.getElementById('signupButton');
+      if (signupButton) {
+        signupButton.addEventListener('click', async function() {
+          const name = document.getElementById('signup-name').value;
+          const email = document.getElementById('signup-email').value;
+          const password = document.getElementById('signup-password').value;
+          const passwordConfirm = document.getElementById('signup-password-confirm').value;
+          const terms = document.getElementById('terms').checked;
+          
+          if (!name || !email || !password) {
+            alert('모든 필수 정보를 입력해주세요');
+            return;
+          }
+          
+          if (password !== passwordConfirm) {
+            alert('비밀번호가 일치하지 않습니다');
+            return;
+          }
+          
+          if (!terms) {
+            alert('이용약관에 동의해주세요');
+            return;
+          }
+          
+          try {
+            await registerWithEmail(name, email, password);
+            loginModal.classList.add('hidden');
+          } catch (error) {
+            handleAuthError(error);
+          }
+        });
+      }
+      
+      // 비밀번호 재설정
+      const resetPasswordButton = document.getElementById('resetPasswordButton');
+      if (resetPasswordButton) {
+        resetPasswordButton.addEventListener('click', async function() {
+          const email = document.getElementById('reset-email').value;
+          
+          if (!email) {
+            alert('이메일을 입력해주세요');
+            return;
+          }
+          
+          try {
+            await resetPassword(email);
+            alert('비밀번호 재설정 이메일이 발송되었습니다');
+            loginForm.classList.remove('hidden');
+            forgotPasswordForm.classList.add('hidden');
+            modalTitle.textContent = '로그인';
+          } catch (error) {
+            handleAuthError(error);
+          }
+        });
+      }
+      
+      // 로그아웃
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          try {
+            await logoutUser();
+            const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+            if (profileDropdownMenu) profileDropdownMenu.classList.add('hidden');
+          } catch (error) {
+            console.error('로그아웃 에러:', error);
+          }
+        });
+      }
+      
+      // 사용자 프로필 드롭다운 메뉴
+      const userProfileBtn = document.getElementById('userProfileBtn');
+      const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+      
+      if (userProfileBtn && profileDropdownMenu) {
+        userProfileBtn.addEventListener('click', function() {
+          profileDropdownMenu.classList.toggle('hidden');
+        });
         
-        // 구글 로그인
-        if (googleLoginBtn) {
-          googleLoginBtn.addEventListener('click', async function() {
-            try {
-              await authModule.loginWithGoogle();
-              document.getElementById('loginModal').classList.add('hidden');
-            } catch (error) {
-              handleAuthError(error);
-            }
-          });
-        }
-        
-        // 구글 회원가입 (구글 로그인과 동일)
-        if (googleSignupBtn) {
-          googleSignupBtn.addEventListener('click', async function() {
-            try {
-              await authModule.loginWithGoogle();
-              document.getElementById('loginModal').classList.add('hidden');
-            } catch (error) {
-              handleAuthError(error);
-            }
-          });
-        }
-        
-        // 이메일/비밀번호 회원가입
-        if (signupButton) {
-          signupButton.addEventListener('click', async function() {
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const passwordConfirm = document.getElementById('signup-password-confirm').value;
-            const terms = document.getElementById('terms').checked;
-            
-            if (!name || !email || !password) {
-              alert('모든 필수 정보를 입력해주세요');
-              return;
-            }
-            
-            if (password !== passwordConfirm) {
-              alert('비밀번호가 일치하지 않습니다');
-              return;
-            }
-            
-            if (!terms) {
-              alert('이용약관에 동의해주세요');
-              return;
-            }
-            
-            try {
-              await authModule.registerWithEmail(name, email, password);
-              document.getElementById('loginModal').classList.add('hidden');
-            } catch (error) {
-              handleAuthError(error);
-            }
-          });
-        }
-        
-        // 비밀번호 재설정
-        if (resetPasswordButton) {
-          resetPasswordButton.addEventListener('click', async function() {
-            const email = document.getElementById('reset-email').value;
-            
-            if (!email) {
-              alert('이메일을 입력해주세요');
-              return;
-            }
-            
-            try {
-              await authModule.resetPassword(email);
-              alert('비밀번호 재설정 이메일이 발송되었습니다');
-              document.getElementById('loginForm').classList.remove('hidden');
-              document.getElementById('forgotPasswordForm').classList.add('hidden');
-              document.getElementById('modal-title').textContent = '로그인';
-            } catch (error) {
-              handleAuthError(error);
-            }
-          });
-        }
-        
-        // 로그아웃
-        if (logoutBtn) {
-          logoutBtn.addEventListener('click', async function(e) {
-            e.preventDefault();
-            try {
-              await authModule.logoutUser();
-              document.getElementById('profileDropdownMenu').classList.add('hidden');
-            } catch (error) {
-              console.error('로그아웃 에러:', error);
-            }
-          });
-        }
-      }).catch(error => {
-        console.error('auth.js 모듈 로드 에러:', error);
-      });
+        // 드롭다운 외부 클릭 시 닫기
+        document.addEventListener('click', function(e) {
+          if (userProfileBtn && profileDropdownMenu && 
+              !userProfileBtn.contains(e.target) && 
+              !profileDropdownMenu.contains(e.target)) {
+            profileDropdownMenu.classList.add('hidden');
+          }
+        });
+      }
+      
+      // 카카오 SDK 초기화
+      if (typeof Kakao !== 'undefined') {
+        // 올바른 JavaScript 키로 초기화
+        Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
+        console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
+      }
       
       // 카카오 로그인
+      const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
       if (kakaoLoginBtn) {
         kakaoLoginBtn.addEventListener('click', function() {
           if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
@@ -903,7 +1131,7 @@
                 success: function(res) {
                   console.log('카카오 로그인 성공:', res);
                   alert(`카카오 로그인 성공: ${res.properties.nickname}님 환영합니다!`);
-                  document.getElementById('loginModal').classList.add('hidden');
+                  loginModal.classList.add('hidden');
                   // Firebase 커스텀 인증이 필요합니다 (별도 서버 필요)
                 },
                 fail: function(error) {
@@ -921,104 +1149,10 @@
       }
       
       // 카카오 회원가입 (카카오 로그인과 동일)
+      const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
       if (kakaoSignupBtn) {
         kakaoSignupBtn.addEventListener('click', function() {
-          kakaoLoginBtn.click();
+          if (kakaoLoginBtn) kakaoLoginBtn.click();
         });
       }
     });
-
-    // 카카오 SDK 초기화
-    if (typeof Kakao !== 'undefined') {
-      // 실제 JavaScript 키로 교체하세요
-      Kakao.init('YOUR_KAKAO_JAVASCRIPT_KEY');
-      console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
-    }
-
-    // 인증 오류 처리
-    function handleAuthError(error) {
-      let message = '오류가 발생했습니다. 다시 시도해주세요.';
-      
-      switch (error.code) {
-        case 'auth/invalid-email':
-          message = '유효하지 않은 이메일 형식입니다.';
-          break;
-        case 'auth/user-disabled':
-          message = '계정이 비활성화되었습니다.';
-          break;
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-          message = '이메일 또는 비밀번호가 올바르지 않습니다.';
-          break;
-        case 'auth/email-already-in-use':
-          message = '이미 가입된 이메일입니다.';
-          break;
-        case 'auth/weak-password':
-          message = '비밀번호는 최소 6자 이상이어야 합니다.';
-          break;
-        case 'auth/too-many-requests':
-          message = '너무 많은 요청이 있었습니다. 잠시 후 다시 시도해주세요.';
-          break;
-      }
-      
-      alert(message);
-      console.error(error);
-    }
-  </script>
-
-  <!-- 카카오 SDK (카카오 로그인 사용 시) -->
-  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-
-  <!-- 인증 관련 스크립트 -->
-  <script type="module" src="js/auth.js"></script>
-  
-  <!-- Firebase SDK -->
-  <script type="module">
-    // firebase-config.js에서 앱 인스턴스 가져오기
-    import { app } from './js/firebase-config.js';
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // 인증 상태 변경 감지
-    onAuthStateChanged(auth, (user) => {
-      const userProfileDropdown = document.getElementById('userProfileDropdown');
-      const headerLoginBtn = document.getElementById('headerLoginBtn');
-      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-      const userDisplayName = document.getElementById('userDisplayName');
-      const userAvatarImg = document.getElementById('userAvatarImg');
-
-      if (user) {
-        // 로그인 상태
-        console.log("User is signed in:", user.displayName);
-        
-        // UI 업데이트
-        if (headerLoginBtn) headerLoginBtn.classList.add('hidden');
-        if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
-        if (userProfileDropdown) userProfileDropdown.classList.remove('hidden');
-        
-        // 사용자 정보 표시
-        if (userDisplayName) userDisplayName.textContent = user.displayName || '사용자';
-        if (userAvatarImg) {
-          if (user.photoURL) {
-            userAvatarImg.src = user.photoURL;
-          } else {
-            const initial = (user.displayName || '사용자')[0].toUpperCase();
-            userAvatarImg.src = `https://via.placeholder.com/36/EC4899/ffffff?text=${initial}`;
-          }
-        }
-      } else {
-        // 로그아웃 상태
-        console.log("User is signed out");
-        
-        // UI 업데이트
-        if (headerLoginBtn) headerLoginBtn.classList.remove('hidden');
-        if (mobileLoginBtn) mobileLoginBtn.classList.remove('hidden');
-        if (userProfileDropdown) userProfileDropdown.classList.add('hidden');
-      }
-    });
-  </script>
-</body>
-</html>

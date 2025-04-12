@@ -119,6 +119,28 @@
       100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
     }
   </style>
+  <script>
+window.onload = function() {
+  console.log("페이지 로드됨");
+  
+  // 직접 테스트용 이벤트 리스너
+  document.addEventListener('click', function(e) {
+    console.log('클릭 이벤트 발생:', e.target);
+  });
+
+  // 헤더 로그인 버튼 테스트
+  const headerLoginBtn = document.getElementById('headerLoginBtn');
+  if (headerLoginBtn) {
+    console.log('헤더 로그인 버튼 찾음');
+    headerLoginBtn.addEventListener('click', function() {
+      console.log('헤더 로그인 버튼 클릭됨');
+      alert('로그인 버튼 클릭!');
+    });
+  } else {
+    console.log('헤더 로그인 버튼을 찾을 수 없음');
+  }
+}
+</script>
 </head>
 <body>
   <div class="min-h-screen flex flex-col">

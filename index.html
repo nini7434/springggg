@@ -125,29 +125,29 @@
           </button>
           
           <!-- 사용자 프로필 영역 (로그인 후에만 표시) -->
-          <div id="userProfileDropdown" class="hidden relative">
-            <button id="userProfileBtn" class="flex items-center focus:outline-none">
-              <img id="userAvatarImg" src="https://via.placeholder.com/36/EC4899/ffffff?text=U" alt="프로필 사진" class="w-8 h-8 rounded-full border-2 border-pink-400">
-              <span id="userDisplayName" class="ml-2 text-gray-700 hidden md:inline"></span>
-              <i data-lucide="chevron-down" class="w-4 h-4 ml-1 text-gray-600"></i>
-            </button>
-            
-            <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-              <a href="#" id="myProfileLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="user" class="w-4 h-4 inline-block mr-2"></i> 내 프로필
-              </a>
-              <a href="#" id="myPostsLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="file-text" class="w-4 h-4 inline-block mr-2"></i> 내 글 목록
-              </a>
-              <a href="#" id="favoritesLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="heart" class="w-4 h-4 inline-block mr-2"></i> 관심 목록
-              </a>
-              <hr class="my-1 border-gray-200">
-              <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i> 로그아웃
-              </a>
-            </div>
-          </div>
+<div id="userProfileDropdown" class="hidden relative">
+  <button id="userProfileBtn" class="flex items-center focus:outline-none">
+    <img id="userAvatarImg" src="https://via.placeholder.com/36/EC4899/ffffff?text=U" alt="프로필 사진" class="w-8 h-8 rounded-full border-2 border-pink-400">
+    <span id="userDisplayName" class="ml-2 text-gray-700 hidden md:inline"></span>
+    <i data-lucide="chevron-down" class="w-4 h-4 ml-1 text-gray-600"></i>
+  </button>
+  
+  <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+    <a href="#" id="myProfileLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="user" class="w-4 h-4 inline-block mr-2"></i> 내 프로필
+    </a>
+    <a href="#" id="myPostsLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="file-text" class="w-4 h-4 inline-block mr-2"></i> 내 글 목록
+    </a>
+    <a href="#" id="favoritesLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="heart" class="w-4 h-4 inline-block mr-2"></i> 관심 목록
+    </a>
+    <hr class="my-1 border-gray-200">
+    <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i> 로그아웃
+    </a>
+  </div>
+</div>
         </nav>
         
         <button id="mobileMenuButton" class="md:hidden" aria-label="메뉴 열기">
@@ -707,5 +707,71 @@
       console.log('웹사이트가 초기화되었습니다.');
     });
   </script>
-</body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 프로필 드롭다운 직접 제어
+  const userProfileBtn = document.getElementById('userProfileBtn');
+  const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+  
+  if (userProfileBtn && profileDropdownMenu) {
+    console.log('프로필 버튼과 메뉴를 찾았습니다.');
+    
+    userProfileBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      profileDropdownMenu.classList.toggle('hidden');
+      console.log('프로필 버튼 클릭됨 - 메뉴 상태:', profileDropdownMenu.classList.contains('hidden') ? '숨김' : '표시');
+      
+      // Lucide 아이콘 새로고침
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons({
+          icons: {
+            User: lucide.icons.User,
+            FileText: lucide.icons.FileText,
+            Heart: lucide.icons.Heart,
+            LogOut: lucide.icons.LogOut
+          }
+        });
+      }
+    });
+    
+    // 외부 클릭 시 드롭다운 닫기
+    document.addEventListener('click', function(e) {
+      if (!userProfileBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
+        profileDropdownMenu.classList.add('hidden');
+      }
+    });
+  } else {
+    console.error('프로필 버튼 또는 메뉴를 찾을 수 없습니다:', 
+                  '버튼:', userProfileBtn, 
+                  '메뉴:', profileDropdownMenu);
+  }
+
+  // 로그아웃 기능
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      console.log('로그아웃 버튼 클릭됨');
+      
+      try {
+        // Firebase 로드 확인
+        if (typeof firebase !== 'undefined') {
+          await firebase.auth().signOut();
+          console.log('로그아웃 성공');
+        } else {
+          console.error('Firebase가 로드되지 않았습니다');
+        }
+      } catch (error) {
+        console.error('로그아웃 에러:', error);
+      }
+      
+      // 드롭다운 메뉴 닫기
+      if (profileDropdownMenu) {
+        profileDropdownMenu.classList.add('hidden');
+      }
+    });
+  }
+});
+</script></body>
 </html>

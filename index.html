@@ -670,144 +670,132 @@
   </div>
   
   <!-- 스크립트 부분 -->
-  <script type="module">
-    // 필요한 모듈 로드
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+ <script type="module">
+  // 필요한 모듈 로드
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+  
+  // 모듈화된 자바스크립트 파일 로드
+  import { app } from './js/firebase-config.js';
+  import { initializeUI } from './js/ui.js';
+  import { setupAuthStateObserver, setupAuthEventListeners } from './js/auth-handler.js';
+  import { handleKakaoLogin } from './js/main.js';
+  
+  // DOM이 로드되면 실행
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auth 인스턴스
+    const auth = getAuth(app);
     
-    // 모듈화된 자바스크립트 파일 로드
-    import { app } from './js/firebase-config.js';
-    import { initializeUI } from './js/ui.js';
-    import { setupAuthStateObserver, setupAuthEventListeners } from './js/auth-handler.js';
-    import { handleKakaoLogin } from './js/main.js';
+    // Lucide 아이콘 초기화
+    lucide.createIcons();
     
-    // DOM이 로드되면 실행
-    document.addEventListener('DOMContentLoaded', function() {
-      // Lucide 아이콘 초기화
-      lucide.createIcons();
+    // UI 초기화
+    initializeUI();
+    
+    // 카카오 SDK 초기화
+    if (typeof Kakao !== 'undefined') {
+      if (!Kakao.isInitialized()) {
+        Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
+        console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
+      }
+    } else {
+      console.error('카카오 SDK가 로드되지 않았습니다');
+    }
+    
+    // Firebase 인증 상태 관찰자 설정
+    setupAuthStateObserver();
+    
+    // Firebase 인증 이벤트 리스너 설정
+    setupAuthEventListeners();
+    
+    // 카카오 로그인 버튼 이벤트 리스너
+    const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
+    if (kakaoLoginBtn) {
+      kakaoLoginBtn.addEventListener('click', handleKakaoLogin);
+    }
+    
+    // 카카오 회원가입 버튼 이벤트 리스너
+    const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
+    if (kakaoSignupBtn && kakaoLoginBtn) {
+      kakaoSignupBtn.addEventListener('click', handleKakaoLogin);
+    }
+    
+    // 프로필 드롭다운 직접 제어
+    const userProfileBtn = document.getElementById('userProfileBtn');
+    const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+    
+    if (userProfileBtn && profileDropdownMenu) {
+      console.log('프로필 버튼과 메뉴를 찾았습니다.');
       
-      // UI 초기화
-      initializeUI();
-      
-      // 카카오 SDK 초기화
-      if (typeof Kakao !== 'undefined') {
-        if (!Kakao.isInitialized()) {
-          Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
-          console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
+      userProfileBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        profileDropdownMenu.classList.toggle('hidden');
+        console.log('프로필 버튼 클릭됨 - 메뉴 상태:', profileDropdownMenu.classList.contains('hidden') ? '숨김' : '표시');
+        
+        // Lucide 아이콘 새로고침
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
         }
-      } else {
-        console.error('카카오 SDK가 로드되지 않았습니다');
-      }
+      });
       
-      // Firebase 인증 상태 관찰자 설정
-      setupAuthStateObserver();
-      
-      // Firebase 인증 이벤트 리스너 설정
-      setupAuthEventListeners();
-      
-      // 카카오 로그인 버튼 이벤트 리스너
-      const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
-      if (kakaoLoginBtn) {
-        kakaoLoginBtn.addEventListener('click', handleKakaoLogin);
-      }
-      
-      // 카카오 회원가입 버튼 이벤트 리스너
-      const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
-      if (kakaoSignupBtn && kakaoLoginBtn) {
-        kakaoSignupBtn.addEventListener('click', handleKakaoLogin);
-      }
-      
-      console.log('웹사이트가 초기화되었습니다.');
-    });
-  </script>
+      // 외부 클릭 시 드롭다운 닫기
+      document.addEventListener('click', function(e) {
+        if (!userProfileBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
+          profileDropdownMenu.classList.add('hidden');
+        }
+      });
+    } else {
+      console.error('프로필 버튼 또는 메뉴를 찾을 수 없습니다:', 
+                    '버튼:', userProfileBtn, 
+                    '메뉴:', profileDropdownMenu);
+    }
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // 프로필 드롭다운 직접 제어
-      const userProfileBtn = document.getElementById('userProfileBtn');
-      const profileDropdownMenu = document.getElementById('profileDropdownMenu');
-      
-      if (userProfileBtn && profileDropdownMenu) {
-        console.log('프로필 버튼과 메뉴를 찾았습니다.');
+    // 로그아웃 기능
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        console.log('로그아웃 버튼 클릭됨');
         
-        userProfileBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          profileDropdownMenu.classList.toggle('hidden');
-          console.log('프로필 버튼 클릭됨 - 메뉴 상태:', profileDropdownMenu.classList.contains('hidden') ? '숨김' : '표시');
-          
-          // Lucide 아이콘 새로고침
-          if (typeof lucide !== 'undefined') {
-            lucide.createIcons({
-              icons: {
-                User: lucide.icons.User,
-                FileText: lucide.icons.FileText,
-                Heart: lucide.icons.Heart,
-                LogOut: lucide.icons.LogOut
-              }
-            });
-          }
-        });
+        try {
+          await signOut(auth);
+          console.log('로그아웃 성공');
+        } catch (error) {
+          console.error('로그아웃 에러:', error);
+        }
         
-        // 외부 클릭 시 드롭다운 닫기
-        document.addEventListener('click', function(e) {
-          if (!userProfileBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
-            profileDropdownMenu.classList.add('hidden');
-          }
-        });
-      } else {
-        console.error('프로필 버튼 또는 메뉴를 찾을 수 없습니다:', 
-                      '버튼:', userProfileBtn, 
-                      '메뉴:', profileDropdownMenu);
-      }
-
-      // 로그아웃 기능
-      const logoutBtn = document.getElementById('logoutBtn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', async function(e) {
-          e.preventDefault();
-          console.log('로그아웃 버튼 클릭됨');
+        // 드롭다운 메뉴 닫기
+        if (profileDropdownMenu) {
+          profileDropdownMenu.classList.add('hidden');
+        }
+      });
+    }
+    
+    // 모바일 로그아웃 기능
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        console.log('모바일 로그아웃 버튼 클릭됨');
+        
+        try {
+          await signOut(auth);
+          console.log('로그아웃 성공');
           
-          try {
-            // Firebase 로드 확인
-            const auth = firebase.auth();
-            await auth.signOut();
-            console.log('로그아웃 성공');
-          } catch (error) {
-            console.error('로그아웃 에러:', error);
+          // 모바일 메뉴 닫기
+          const mobileMenu = document.getElementById('mobileMenu');
+          if (mobileMenu) {
+            mobileMenu.classList.add('hidden');
           }
-          
-          // 드롭다운 메뉴 닫기
-          if (profileDropdownMenu) {
-            profileDropdownMenu.classList.add('hidden');
-          }
-        });
-      }
-      
-      // 모바일 로그아웃 기능
-      const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
-      if (mobileLogoutBtn) {
-        mobileLogoutBtn.addEventListener('click', async function(e) {
-          e.preventDefault();
-          console.log('모바일 로그아웃 버튼 클릭됨');
-          
-          try {
-            // Firebase 로드 확인
-            const auth = firebase.auth();
-            await auth.signOut();
-            console.log('로그아웃 성공');
-            
-            // 모바일 메뉴 닫기
-            const mobileMenu = document.getElementById('mobileMenu');
-            if (mobileMenu) {
-              mobileMenu.classList.add('hidden');
-            }
-          } catch (error) {
-            console.error('로그아웃 에러:', error);
-          }
-        });
-      }
-    });
-  </script>
+        } catch (error) {
+          console.error('로그아웃 에러:', error);
+        }
+      });
+    }
+    
+    console.log('웹사이트가 초기화되었습니다.');
+  });
+</script>
 </body>
 </html>

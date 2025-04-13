@@ -264,20 +264,19 @@ export function setupAuthEventListeners() {
   }
   
   // 프로필 드롭다운 토글
-  const userProfileBtn = document.getElementById('userProfileBtn');
-  const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+const userProfileBtn = document.getElementById('userProfileBtn');
+const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+
+if (userProfileBtn && profileDropdownMenu) {
+  userProfileBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    profileDropdownMenu.classList.toggle('hidden');
+  });
   
-  if (userProfileBtn && profileDropdownMenu) {
-    userProfileBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      profileDropdownMenu.classList.toggle('hidden');
-    });
-    
-    // 드롭다운 외부 클릭 시 닫기
-    document.addEventListener('click', function(e) {
-      if (profileDropdownMenu && !userProfileBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
-        profileDropdownMenu.classList.add('hidden');
-      }
-    });
-  }
+  // 드롭다운 외부 클릭 시 닫기
+  document.addEventListener('click', function(e) {
+    if (profileDropdownMenu && !userProfileBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
+      profileDropdownMenu.classList.add('hidden');
+    }
+  });
 }

@@ -64,6 +64,8 @@ export function setupAuthStateObserver() {
 
 // 인증 상태에 따른 UI 업데이트
 function updateUIForAuthState(user) {
+  console.log("인증 상태 변경:", user ? "로그인됨" : "로그아웃됨");
+  
   // 헤더 요소
   const userProfileDropdown = document.getElementById('userProfileDropdown');
   const headerLoginBtn = document.getElementById('headerLoginBtn');
@@ -75,10 +77,18 @@ function updateUIForAuthState(user) {
   const mobileUserProfile = document.getElementById('mobileUserProfile');
   const mobileUserDisplayName = document.getElementById('mobileUserDisplayName');
   const mobileUserAvatarImg = document.getElementById('mobileUserAvatarImg');
+  
+  if (!userProfileDropdown) {
+    console.error("userProfileDropdown 요소를 찾을 수 없습니다");
+  }
+  
+  if (!headerLoginBtn) {
+    console.error("headerLoginBtn 요소를 찾을 수 없습니다");
+  }
 
   if (user) {
     // 로그인 상태
-    console.log("User is signed in:", user.displayName);
+    console.log("사용자 정보:", user.displayName, user.email);
     
     // 데스크톱 UI 업데이트
     if (headerLoginBtn) headerLoginBtn.classList.add('hidden');
@@ -111,7 +121,7 @@ function updateUIForAuthState(user) {
     }
   } else {
     // 로그아웃 상태
-    console.log("User is signed out");
+    console.log("로그아웃 상태");
     
     // 데스크톱 UI 업데이트
     if (headerLoginBtn) headerLoginBtn.classList.remove('hidden');
@@ -233,50 +243,4 @@ export function setupAuthEventListeners() {
       }
     });
   }
-  
-  // 로그아웃 (데스크톱)
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async function(e) {
-      e.preventDefault();
-      try {
-        await logoutUser();
-        document.getElementById('profileDropdownMenu').classList.add('hidden');
-      } catch (error) {
-        console.error('로그아웃 에러:', error);
-      }
-    });
-  }
-  
-  // 로그아웃 (모바일)
-  const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
-  if (mobileLogoutBtn) {
-    mobileLogoutBtn.addEventListener('click', async function(e) {
-      e.preventDefault();
-      try {
-        await logoutUser();
-        const mobileMenu = document.getElementById('mobileMenu');
-        if (mobileMenu) mobileMenu.classList.add('hidden');
-      } catch (error) {
-        console.error('로그아웃 에러:', error);
-      }
-    });
-  }
-  
-  // 프로필 드롭다운 토글
-const userProfileBtn = document.getElementById('userProfileBtn');
-const profileDropdownMenu = document.getElementById('profileDropdownMenu');
-
-if (userProfileBtn && profileDropdownMenu) {
-  userProfileBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    profileDropdownMenu.classList.toggle('hidden');
-  });
-  
-  // 드롭다운 외부 클릭 시 닫기
-  document.addEventListener('click', function(e) {
-    if (profileDropdownMenu && !userProfileBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
-      profileDropdownMenu.classList.add('hidden');
-    }
-  });
 }

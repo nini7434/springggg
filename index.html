@@ -118,9 +118,36 @@
           <a href="#features" class="text-gray-600 hover:text-pink-500 transition-colors">기능</a>
           <a href="#stories" class="text-gray-600 hover:text-pink-500 transition-colors">실제 이야기</a>
           <a href="#" class="text-gray-600 hover:text-pink-500 transition-colors">자유 게시판</a>
+          
+          <!-- 로그인 버튼 (로그인 전에만 표시) -->
           <button id="headerLoginBtn" class="px-5 py-2 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-full shadow-md hover:shadow-xl transition-all hover:scale-105">
             로그인
           </button>
+          
+          <!-- 사용자 프로필 영역 (로그인 후에만 표시) -->
+          <div id="userProfileDropdown" class="hidden relative">
+            <button id="userProfileBtn" class="flex items-center focus:outline-none">
+              <img id="userAvatarImg" src="https://via.placeholder.com/36/EC4899/ffffff?text=U" alt="프로필 사진" class="w-8 h-8 rounded-full border-2 border-pink-400">
+              <span id="userDisplayName" class="ml-2 text-gray-700 hidden md:inline"></span>
+              <i data-lucide="chevron-down" class="w-4 h-4 ml-1 text-gray-600"></i>
+            </button>
+            
+            <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+              <a href="#" id="myProfileLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="user" class="w-4 h-4 inline-block mr-2"></i> 내 프로필
+              </a>
+              <a href="#" id="myPostsLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="file-text" class="w-4 h-4 inline-block mr-2"></i> 내 글 목록
+              </a>
+              <a href="#" id="favoritesLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="heart" class="w-4 h-4 inline-block mr-2"></i> 관심 목록
+              </a>
+              <hr class="my-1 border-gray-200">
+              <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i> 로그아웃
+              </a>
+            </div>
+          </div>
         </nav>
         
         <button id="mobileMenuButton" class="md:hidden" aria-label="메뉴 열기">
@@ -142,9 +169,31 @@
           <a href="#" class="flex items-center py-2 text-gray-600 hover:text-pink-500">
             <i data-lucide="users" class="h-5 w-5 mr-2"></i>자유 게시판
           </a>
+          
+          <!-- 모바일 로그인 버튼 (로그인 전에만 표시) -->
           <button id="mobileLoginBtn" class="flex items-center py-2 text-pink-500 font-medium">
             <i data-lucide="log-in" class="h-5 w-5 mr-2"></i>로그인
           </button>
+          
+          <!-- 모바일 사용자 프로필 영역 (로그인 후에만 표시) -->
+          <div id="mobileUserProfile" class="hidden">
+            <div class="flex items-center py-2 text-gray-700">
+              <img id="mobileUserAvatarImg" src="https://via.placeholder.com/36/EC4899/ffffff?text=U" alt="프로필 사진" class="w-6 h-6 rounded-full mr-2">
+              <span id="mobileUserDisplayName">사용자</span>
+            </div>
+            <a href="#" id="mobileMyProfileLink" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="user" class="h-4 w-4 mr-2"></i>내 프로필
+            </a>
+            <a href="#" id="mobileMyPostsLink" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="file-text" class="h-4 w-4 mr-2"></i>내 글 목록
+            </a>
+            <a href="#" id="mobileFavoritesLink" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="heart" class="h-4 w-4 mr-2"></i>관심 목록
+            </a>
+            <a href="#" id="mobileLogoutBtn" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="log-out" class="h-4 w-4 mr-2"></i>로그아웃
+            </a>
+          </div>
         </nav>
       </div>
     </header>
@@ -397,202 +446,207 @@
           <p class="text-xs text-gray-500">&copy; 2025 다시, 봄. All rights reserved.</p>
         </div>
       </div>
-   <!-- 로그인/회원가입 모달 -->
-<div id="loginModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-    <!-- 배경 오버레이 -->
-    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
-    
-    <!-- 모달 중앙 정렬 트릭 -->
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-    
-    <!-- 모달 내용 -->
-    <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-      <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-        <div class="sm:flex sm:items-start">
-          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-            <!-- 모달 헤더 -->
-            <div class="flex items-center justify-between mb-6">
-              <h3 class="text-2xl font-medium leading-6 text-gray-900" id="modal-title">
-                로그인
-              </h3>
-              <button type="button" class="closeModal text-gray-400 hover:text-gray-500 focus:outline-none">
-                <i data-lucide="x" class="w-6 h-6"></i>
-              </button>
-            </div>
-            
-            <!-- 모달 내용 -->
-            <div class="mt-2">
-              <!-- 로그인 폼 -->
-              <div id="loginForm">
-                <p class="mb-6 text-gray-600">다시, 봄에 오신 것을 환영합니다. 소중한 인연을 찾기 위해 로그인해주세요.</p>
-                
-                <div class="space-y-4">
-                  <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">이메일</label>
-                    <input type="email" id="email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
-                  </div>
+    </footer>
+  </div>
+  
+  <!-- 로그인/회원가입 모달 -->
+  <div id="loginModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <!-- 배경 오버레이 -->
+      <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+      
+      <!-- 모달 중앙 정렬 트릭 -->
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      
+      <!-- 모달 내용 -->
+      <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+              <!-- 모달 헤더 -->
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-medium leading-6 text-gray-900" id="modal-title">
+                  로그인
+                </h3>
+                <button type="button" class="closeModal text-gray-400 hover:text-gray-500 focus:outline-none">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+              </div>
+              
+              <!-- 모달 내용 -->
+              <div class="mt-2">
+                <!-- 로그인 폼 -->
+                <div id="loginForm">
+                  <p class="mb-6 text-gray-600">다시, 봄에 오신 것을 환영합니다. 소중한 인연을 찾기 위해 로그인해주세요.</p>
                   
-                  <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">비밀번호</label>
-                    <input type="password" id="password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호" required>
-                  </div>
-                  
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <input id="remember-me" name="remember-me" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500">
-                      <label for="remember-me" class="block ml-2 text-sm text-gray-700">
-                        로그인 상태 유지
-                      </label>
+                  <div class="space-y-4">
+                    <div>
+                      <div>
+                      <label for="email" class="block text-sm font-medium text-gray-700">이메일</label>
+                      <input type="email" id="email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
                     </div>
                     
-                    <div class="text-sm">
-                      <a href="#" id="forgotPassword" class="font-medium text-pink-600 hover:text-pink-500">
-                        비밀번호 찾기
+                    <div>
+                      <label for="password" class="block text-sm font-medium text-gray-700">비밀번호</label>
+                      <input type="password" id="password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호" required>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500">
+                        <label for="remember-me" class="block ml-2 text-sm text-gray-700">
+                          로그인 상태 유지
+                        </label>
+                      </div>
+                      
+                      <div class="text-sm">
+                        <a href="#" id="forgotPassword" class="font-medium text-pink-600 hover:text-pink-500">
+                          비밀번호 찾기
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <button type="button" id="loginButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        로그인
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6">
+                    <div class="relative">
+                      <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div class="relative flex justify-center text-sm">
+                        <span class="px-2 text-gray-500 bg-white">또는</span>
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-3 mt-6">
+                      <button type="button" id="googleLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
+                        Google 계정으로 로그인
+                      </button>
+                      
+                      <button type="button" id="kakaoLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
+                        카카오로 시작하기
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                      아직 회원이 아니신가요?
+                      <a href="#" id="showSignup" class="font-medium text-pink-600 hover:text-pink-500">
+                        회원가입
                       </a>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <button type="button" id="loginButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                      로그인
-                    </button>
+                    </p>
                   </div>
                 </div>
                 
-                <div class="mt-6">
-                  <div class="relative">
-                    <div class="absolute inset-0 flex items-center">
-                      <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                      <span class="px-2 text-gray-500 bg-white">또는</span>
-                    </div>
-                  </div>
+                <!-- 회원가입 폼 (처음에는 숨김) -->
+                <div id="signupForm" class="hidden">
+                  <p class="mb-6 text-gray-600">다시, 봄에서 소중한 인연을 찾기 위한 첫 걸음을 시작하세요.</p>
                   
-                  <div class="grid grid-cols-1 gap-3 mt-6">
-                    <button type="button" id="googleLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
-                      Google 계정으로 로그인
-                    </button>
+                  <div class="space-y-4">
+                    <div>
+                      <label for="signup-name" class="block text-sm font-medium text-gray-700">이름</label>
+                      <input type="text" id="signup-name" name="name" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이름" required>
+                    </div>
                     
-                    <button type="button" id="kakaoLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
-                      카카오로 시작하기
-                    </button>
-                  </div>
-                </div>
-                
-                <div class="mt-6 text-center">
-                  <p class="text-sm text-gray-600">
-                    아직 회원이 아니신가요?
-                    <a href="#" id="showSignup" class="font-medium text-pink-600 hover:text-pink-500">
-                      회원가입
-                    </a>
-                  </p>
-                </div>
-              </div>
-              
-              <!-- 회원가입 폼 (처음에는 숨김) -->
-              <div id="signupForm" class="hidden">
-                <p class="mb-6 text-gray-600">다시, 봄에서 소중한 인연을 찾기 위한 첫 걸음을 시작하세요.</p>
-                
-                <div class="space-y-4">
-                  <div>
-                    <label for="signup-name" class="block text-sm font-medium text-gray-700">이름</label>
-                    <input type="text" id="signup-name" name="name" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이름" required>
-                  </div>
-                  
-                  <div>
-                    <label for="signup-email" class="block text-sm font-medium text-gray-700">이메일</label>
-                    <input type="email" id="signup-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
-                  </div>
-                  
-                  <div>
-                    <label for="signup-password" class="block text-sm font-medium text-gray-700">비밀번호</label>
-                    <input type="password" id="signup-password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 (8자 이상)" minlength="8" required>
-                  </div>
-                  
-                  <div>
-                    <label for="signup-password-confirm" class="block text-sm font-medium text-gray-700">비밀번호 확인</label>
-                    <input type="password" id="signup-password-confirm" name="password-confirm" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 확인" minlength="8" required>
-                  </div>
-                  
-                  <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                      <input id="terms" name="terms" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500" required>
+                    <div>
+                      <label for="signup-email" class="block text-sm font-medium text-gray-700">이메일</label>
+                      <input type="email" id="signup-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
                     </div>
-                    <div class="ml-3 text-sm">
-                      <label for="terms" class="font-medium text-gray-700">
-                        <a href="#" class="text-pink-600 hover:text-pink-500">이용약관</a> 및 
-                        <a href="#" class="text-pink-600 hover:text-pink-500">개인정보처리방침</a>에 동의합니다.
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <button type="button" id="signupButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                      회원가입
-                    </button>
-                  </div>
-                </div>
-                
-                <div class="mt-6">
-                  <div class="relative">
-                    <div class="absolute inset-0 flex items-center">
-                      <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                      <span class="px-2 text-gray-500 bg-white">또는</span>
-                    </div>
-                  </div>
-                  
-                  <div class="grid grid-cols-1 gap-3 mt-6">
-                    <button type="button" id="googleSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
-                      Google 계정으로 회원가입
-                    </button>
                     
-                    <button type="button" id="kakaoSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
-                      카카오로 시작하기
-                    </button>
-                  </div>
-                </div>
-                
-                <div class="mt-6 text-center">
-                  <p class="text-sm text-gray-600">
-                    이미 회원이신가요?
-                    <a href="#" id="showLogin" class="font-medium text-pink-600 hover:text-pink-500">
-                      로그인
-                    </a>
-                  </p>
-                </div>
-              </div>
-              
-              <!-- 비밀번호 찾기 폼 (처음에는 숨김) -->
-              <div id="forgotPasswordForm" class="hidden">
-                <p class="mb-6 text-gray-600">가입한 이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
-                
-                <div class="space-y-4">
-                  <div>
-                    <label for="reset-email" class="block text-sm font-medium text-gray-700">이메일</label>
-                    <input type="email" id="reset-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="가입한 이메일 주소" required>
+                    <div>
+                      <label for="signup-password" class="block text-sm font-medium text-gray-700">비밀번호</label>
+                      <input type="password" id="signup-password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 (8자 이상)" minlength="8" required>
+                    </div>
+                    
+                    <div>
+                      <label for="signup-password-confirm" class="block text-sm font-medium text-gray-700">비밀번호 확인</label>
+                      <input type="password" id="signup-password-confirm" name="password-confirm" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 확인" minlength="8" required>
+                    </div>
+                    
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <input id="terms" name="terms" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500" required>
+                      </div>
+                      <div class="ml-3 text-sm">
+                        <label for="terms" class="font-medium text-gray-700">
+                          <a href="#" class="text-pink-600 hover:text-pink-500">이용약관</a> 및 
+                          <a href="#" class="text-pink-600 hover:text-pink-500">개인정보처리방침</a>에 동의합니다.
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <button type="button" id="signupButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        회원가입
+                      </button>
+                    </div>
                   </div>
                   
-                  <div>
-                    <button type="button" id="resetPasswordButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                      비밀번호 재설정 링크 보내기
-                    </button>
+                  <div class="mt-6">
+                    <div class="relative">
+                      <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div class="relative flex justify-center text-sm">
+                        <span class="px-2 text-gray-500 bg-white">또는</span>
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-3 mt-6">
+                      <button type="button" id="googleSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
+                        Google 계정으로 회원가입
+                      </button>
+                      
+                      <button type="button" id="kakaoSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
+                        카카오로 시작하기
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                      이미 회원이신가요?
+                      <a href="#" id="showLogin" class="font-medium text-pink-600 hover:text-pink-500">
+                        로그인
+                      </a>
+                    </p>
                   </div>
                 </div>
                 
-                <div class="mt-6 text-center">
-                  <p class="text-sm text-gray-600">
-                    <a href="#" id="backToLogin" class="font-medium text-pink-600 hover:text-pink-500">
-                      로그인으로 돌아가기
-                    </a>
-                  </p>
+                <!-- 비밀번호 찾기 폼 (처음에는 숨김) -->
+                <div id="forgotPasswordForm" class="hidden">
+                  <p class="mb-6 text-gray-600">가입한 이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
+                  
+                  <div class="space-y-4">
+                    <div>
+                      <label for="reset-email" class="block text-sm font-medium text-gray-700">이메일</label>
+                      <input type="email" id="reset-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="가입한 이메일 주소" required>
+                    </div>
+                    
+                    <div>
+                      <button type="button" id="resetPasswordButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        비밀번호 재설정 링크 보내기
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                      <a href="#" id="backToLogin" class="font-medium text-pink-600 hover:text-pink-500">
+                        로그인으로 돌아가기
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -601,44 +655,28 @@
       </div>
     </div>
   </div>
-</div>
-
-<!-- 로그인 상태 확인 및 사용자 프로필 -->
-<div id="userProfileDropdown" class="hidden relative">
-  <button id="userProfileBtn" class="flex items-center focus:outline-none">
-    <img id="userAvatarImg" src="https://via.placeholder.com/36/EC4899/ffffff?text=U" alt="프로필 사진" class="w-8 h-8 rounded-full border-2 border-pink-400">
-    <span id="userDisplayName" class="ml-2 text-gray-700 hidden md:inline"></span>
-    <i data-lucide="chevron-down" class="w-4 h-4 ml-1 text-gray-600"></i>
-  </button>
   
-  <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-    <a href="#" id="myProfileLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-      <i data-lucide="user" class="w-4 h-4 inline-block mr-2"></i> 내 프로필
-    </a>
-    <a href="#" id="myPostsLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-      <i data-lucide="file-text" class="w-4 h-4 inline-block mr-2"></i> 내 글 목록
-    </a>
-    <a href="#" id="favoritesLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-      <i data-lucide="heart" class="w-4 h-4 inline-block mr-2"></i> 관심 목록
-    </a>
-    <hr class="my-1 border-gray-200">
-    <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-      <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i> 로그아웃
-    </a>
-  </div>
-</div>
-</footer>
-  </div>
-  
-  <!-- 스크립트 순서 중요: 먼저 기본 UI 관련 스크립트 로드 -->
-  <script>
-    // Lucide 아이콘 초기화
-    document.addEventListener('DOMContentLoaded', function() {
-      lucide.createIcons();
-    });
+  <!-- 스크립트 부분 -->
+  <script type="module">
+    // 필요한 모듈 로드
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
     
-    // 카카오 SDK 초기화
+    // 모듈화된 자바스크립트 파일 로드
+    import { app } from './js/firebase-config.js';
+    import { initializeUI } from './js/ui.js';
+    import { setupAuthStateObserver, setupAuthEventListeners } from './js/auth-handler.js';
+    import { handleKakaoLogin } from './js/main.js';
+    
+    // DOM이 로드되면 실행
     document.addEventListener('DOMContentLoaded', function() {
+      // Lucide 아이콘 초기화
+      lucide.createIcons();
+      
+      // UI 초기화
+      initializeUI();
+      
+      // 카카오 SDK 초기화
       if (typeof Kakao !== 'undefined') {
         if (!Kakao.isInitialized()) {
           Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
@@ -647,551 +685,26 @@
       } else {
         console.error('카카오 SDK가 로드되지 않았습니다');
       }
-    });
-    
-    // 기본 UI 기능
-    document.addEventListener('DOMContentLoaded', function() {
-      // 모바일 메뉴 토글
-      const mobileMenuButton = document.getElementById('mobileMenuButton');
-      if (mobileMenuButton) {
-        mobileMenuButton.addEventListener('click', function() {
-          const mobileMenu = document.getElementById('mobileMenu');
-          if (mobileMenu.classList.contains('hidden')) {
-            mobileMenu.classList.remove('hidden');
-            this.setAttribute('aria-expanded', 'true');
-            this.innerHTML = '<i data-lucide="x" class="h-6 w-6"></i>';
-            lucide.createIcons();
-          } else {
-            mobileMenu.classList.add('hidden');
-            this.setAttribute('aria-expanded', 'false');
-            this.innerHTML = '<i data-lucide="menu" class="h-6 w-6"></i>';
-            lucide.createIcons();
-          }
-        });
-      }
       
-      // 스크롤 애니메이션
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          
-          const targetId = this.getAttribute('href');
-          if (targetId === '#') return;
-          
-          const targetElement = document.querySelector(targetId);
-          if (targetElement) {
-            window.scrollTo({
-              top: targetElement.offsetTop - 100,
-              behavior: 'smooth'
-            });
-            
-            // 모바일 메뉴 닫기
-            const mobileMenu = document.getElementById('mobileMenu');
-            const menuButton = document.getElementById('mobileMenuButton');
-            if (mobileMenu && menuButton) {
-              mobileMenu.classList.add('hidden');
-              menuButton.setAttribute('aria-expanded', 'false');
-              menuButton.innerHTML = '<i data-lucide="menu" class="h-6 w-6"></i>';
-              lucide.createIcons();
-            }
-          }
-        });
-      });
+      // Firebase 인증 상태 관찰자 설정
+      setupAuthStateObserver();
       
-      // 로그인 모달 관련
-      const loginModal = document.getElementById('loginModal');
-      const headerLoginBtn = document.getElementById('headerLoginBtn');
-      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-      const closeModalBtns = document.querySelectorAll('.closeModal');
+      // Firebase 인증 이벤트 리스너 설정
+      setupAuthEventListeners();
       
-      // 로그인 버튼 클릭 시 모달 열기
-      if (headerLoginBtn) {
-        headerLoginBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('헤더 로그인 버튼 클릭됨');
-          if (loginModal) loginModal.classList.remove('hidden');
-        });
-      }
-      
-      if (mobileLoginBtn) {
-        mobileLoginBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('모바일 로그인 버튼 클릭됨');
-          if (loginModal) loginModal.classList.remove('hidden');
-        });
-      }
-      
-      // 닫기 버튼
-      closeModalBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-          if (loginModal) loginModal.classList.add('hidden');
-        });
-      });
-      
-      // 모달 외부 클릭 시 닫기
-      if (loginModal) {
-        loginModal.addEventListener('click', function(e) {
-          if (e.target === loginModal) {
-            loginModal.classList.add('hidden');
-          }
-        });
-      }
-      
-      // 폼 전환 (로그인 <-> 회원가입 <-> 비밀번호 찾기)
-      const showSignupLink = document.getElementById('showSignup');
-      const showLoginLink = document.getElementById('showLogin');
-      const loginForm = document.getElementById('loginForm');
-      const signupForm = document.getElementById('signupForm');
-      const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-      const forgotPasswordLink = document.getElementById('forgotPassword');
-      const backToLoginLink = document.getElementById('backToLogin');
-      const modalTitle = document.getElementById('modal-title');
-      
-      if (showSignupLink && loginForm && signupForm && modalTitle) {
-        showSignupLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.add('hidden');
-          signupForm.classList.remove('hidden');
-          if (forgotPasswordForm) forgotPasswordForm.classList.add('hidden');
-          modalTitle.textContent = '회원가입';
-        });
-      }
-      
-      if (showLoginLink && loginForm && signupForm && modalTitle) {
-        showLoginLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.remove('hidden');
-          signupForm.classList.add('hidden');
-          if (forgotPasswordForm) forgotPasswordForm.classList.add('hidden');
-          modalTitle.textContent = '로그인';
-        });
-      }
-      
-      if (forgotPasswordLink && loginForm && forgotPasswordForm && modalTitle) {
-        forgotPasswordLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.add('hidden');
-          if (signupForm) signupForm.classList.add('hidden');
-          forgotPasswordForm.classList.remove('hidden');
-          modalTitle.textContent = '비밀번호 찾기';
-        });
-      }
-      
-      if (backToLoginLink && loginForm && forgotPasswordForm && modalTitle) {
-        backToLoginLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          loginForm.classList.remove('hidden');
-          if (signupForm) signupForm.classList.add('hidden');
-          forgotPasswordForm.classList.add('hidden');
-          modalTitle.textContent = '로그인';
-        });
-      }
-      
-      // 카카오 로그인
+      // 카카오 로그인 버튼 이벤트 리스너
       const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
       if (kakaoLoginBtn) {
-        kakaoLoginBtn.addEventListener('click', function() {
-          console.log('카카오 로그인 버튼 클릭됨');
-          if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
-            alert('카카오 SDK가 초기화되지 않았습니다');
-            return;
-          }
-          
-          Kakao.Auth.login({
-            success: function(authObj) {
-              // 카카오 사용자 정보 요청
-              Kakao.API.request({
-                url: '/v2/user/me',
-                success: function(res) {
-                  console.log('카카오 로그인 성공:', res);
-                  alert(`카카오 로그인 성공: ${res.properties.nickname}님 환영합니다!`);
-                  if (loginModal) loginModal.classList.add('hidden');
-                  // Firebase 커스텀 인증이 필요합니다 (별도 서버 필요)
-                },
-                fail: function(error) {
-                  console.error('카카오 사용자 정보 요청 실패:', error);
-                  alert('사용자 정보를 가져오는데 실패했습니다');
-                }
-              });
-            },
-            fail: function(err) {
-              console.error('카카오 로그인 실패:', err);
-              alert('카카오 로그인에 실패했습니다');
-            }
-          });
-        });
+        kakaoLoginBtn.addEventListener('click', handleKakaoLogin);
       }
       
-      // 카카오 회원가입 (카카오 로그인과 동일)
+      // 카카오 회원가입 버튼 이벤트 리스너
       const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
       if (kakaoSignupBtn && kakaoLoginBtn) {
-        kakaoSignupBtn.addEventListener('click', function() {
-          kakaoLoginBtn.click();
-        });
-      }
-    });
-  </script>
-
-  <!-- Firebase 관련 스크립트 -->
-  <script type="module">
-    // Firebase 초기화
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { 
-      getAuth, 
-      onAuthStateChanged,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signInWithPopup,
-      GoogleAuthProvider,
-      signOut,
-      sendPasswordResetEmail,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-    import { 
-      getFirestore, 
-      doc, 
-      setDoc,
-      getDoc,
-      serverTimestamp 
-    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
-    // Firebase 구성 정보
-    const firebaseConfig = {
-      apiKey: "AIzaSyCXWLanNJmOcVG43-VPHxwEhUOruPbYM3A",
-      authDomain: "spring-again-5beef.firebaseapp.com",
-      projectId: "spring-again-5beef",
-      storageBucket: "spring-again-5beef.appspot.com",
-      messagingSenderId: "230998888543",
-      appId: "1:230998888543:web:838ddfcde96b275516cbea",
-      measurementId: "G-Q79MWQPK8J"
-    };
-
-    // Firebase 초기화
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const googleProvider = new GoogleAuthProvider();
-
-    // 인증 함수들
-    // 이메일/비밀번호 로그인
-    async function loginWithEmail(email, password) {
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        console.log('로그인 성공:', userCredential.user);
-        return userCredential.user;
-      } catch (error) {
-        console.error('로그인 에러:', error);
-        throw error;
-      }
-    }
-
-    // 구글 로그인
-    async function loginWithGoogle() {
-      try {
-        // 팝업이 차단되는 것을 방지하기 위해 GoogleAuthProvider 설정
-        googleProvider.setCustomParameters({
-          prompt: 'select_account'
-        });
-        
-        const result = await signInWithPopup(auth, googleProvider);
-        console.log('구글 로그인 성공:', result.user);
-        
-        // 사용자 정보 Firestore에 저장
-        await saveUserToFirestore(result.user);
-        
-        return result.user;
-      } catch (error) {
-        console.error('구글 로그인 에러:', error);
-        throw error;
-      }
-    }
-
-    // 회원가입
-    async function registerWithEmail(name, email, password) {
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        
-        // 사용자 정보 업데이트 (이름 추가)
-        await updateProfile(userCredential.user, {
-          displayName: name
-        });
-        
-        // 사용자 정보 Firestore에 저장
-        await saveUserToFirestore(userCredential.user);
-        
-        console.log('회원가입 성공:', userCredential.user);
-        return userCredential.user;
-      } catch (error) {
-        console.error('회원가입 에러:', error);
-        throw error;
-      }
-    }
-
-    // 로그아웃
-    async function logoutUser() {
-      try {
-        await signOut(auth);
-        console.log('로그아웃 성공');
-      } catch (error) {
-        console.error('로그아웃 에러:', error);
-        throw error;
-      }
-    }
-
-    // 비밀번호 재설정 이메일 보내기
-    async function resetPassword(email) {
-      try {
-        await sendPasswordResetEmail(auth, email);
-        console.log('비밀번호 재설정 이메일 발송됨');
-      } catch (error) {
-        console.error('비밀번호 재설정 에러:', error);
-        throw error;
-      }
-    }
-
-    // 사용자 정보를 Firestore에 저장
-    async function saveUserToFirestore(user) {
-      if (!user) return;
-      
-      try {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        
-        const userData = {
-          displayName: user.displayName || '',
-          email: user.email || '',
-          photoURL: user.photoURL || '',
-          lastLogin: serverTimestamp()
-        };
-        
-        if (!userSnap.exists()) {
-          // 새 사용자
-          userData.createdAt = serverTimestamp();
-        }
-        
-        await setDoc(userRef, userData, { merge: true });
-        console.log('사용자 정보 저장됨');
-      } catch (error) {
-        console.error('사용자 정보 저장 에러:', error);
-      }
-    }
-
-    // 인증 오류 처리
-    function handleAuthError(error) {
-      let message = '오류가 발생했습니다. 다시 시도해주세요.';
-      
-      switch (error.code) {
-        case 'auth/invalid-email':
-          message = '유효하지 않은 이메일 형식입니다.';
-          break;
-        case 'auth/user-disabled':
-          message = '계정이 비활성화되었습니다.';
-          break;
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-          message = '이메일 또는 비밀번호가 올바르지 않습니다.';
-          break;
-        case 'auth/email-already-in-use':
-          message = '이미 가입된 이메일입니다.';
-          break;
-        case 'auth/weak-password':
-          message = '비밀번호는 최소 6자 이상이어야 합니다.';
-          break;
-        case 'auth/too-many-requests':
-          message = '너무 많은 요청이 있었습니다. 잠시 후 다시 시도해주세요.';
-          break;
-        case 'auth/popup-closed-by-user':
-          message = '팝업이 사용자에 의해 닫혔습니다. 다시 시도해주세요.';
-          break;
-        case 'auth/popup-blocked':
-          message = '팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.';
-          break;
-        case 'auth/cancelled-popup-request':
-          message = '이미 진행 중인 팝업 요청이 있습니다.';
-          break;
+        kakaoSignupBtn.addEventListener('click', handleKakaoLogin);
       }
       
-      alert(message);
-      console.error('Auth Error:', error.code, error.message);
-    }
-
-    // 인증 상태 변경 감지
-    onAuthStateChanged(auth, (user) => {
-      const userProfileDropdown = document.getElementById('userProfileDropdown');
-      const headerLoginBtn = document.getElementById('headerLoginBtn');
-      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-      const userDisplayName = document.getElementById('userDisplayName');
-      const userAvatarImg = document.getElementById('userAvatarImg');
-
-      if (user) {
-        // 로그인 상태
-        console.log("User is signed in:", user.displayName);
-        
-        // UI 업데이트
-        if (headerLoginBtn) headerLoginBtn.classList.add('hidden');
-        if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
-        if (userProfileDropdown) userProfileDropdown.classList.remove('hidden');
-        
-        // 사용자 정보 표시
-        if (userDisplayName) userDisplayName.textContent = user.displayName || '사용자';
-        if (userAvatarImg) {
-          if (user.photoURL) {
-            userAvatarImg.src = user.photoURL;
-          } else {
-            const initial = (user.displayName || '사용자')[0].toUpperCase();
-            userAvatarImg.src = `https://via.placeholder.com/36/EC4899/ffffff?text=${initial}`;
-          }
-        }
-      } else {
-        // 로그아웃 상태
-        console.log("User is signed out");
-        
-        // UI 업데이트
-        if (headerLoginBtn) headerLoginBtn.classList.remove('hidden');
-        if (mobileLoginBtn) mobileLoginBtn.classList.remove('hidden');
-        if (userProfileDropdown) userProfileDropdown.classList.add('hidden');
-      }
-    });
-
-    // DOM 로드 완료 후 Firebase 인증 이벤트 리스너 연결
-    document.addEventListener('DOMContentLoaded', function() {
-      // 이메일/비밀번호 로그인
-      const loginButton = document.getElementById('loginButton');
-      if (loginButton) {
-        loginButton.addEventListener('click', async function() {
-          const email = document.getElementById('email').value;
-          const password = document.getElementById('password').value;
-          
-          if (!email || !password) {
-            alert('이메일과 비밀번호를 모두 입력해주세요');
-            return;
-          }
-          
-          try {
-            await loginWithEmail(email, password);
-            document.getElementById('loginModal').classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 구글 로그인
-      const googleLoginBtn = document.getElementById('googleLoginBtn');
-      if (googleLoginBtn) {
-        googleLoginBtn.addEventListener('click', async function() {
-          try {
-            console.log('구글 로그인 시도 중...');
-            await loginWithGoogle();
-            document.getElementById('loginModal').classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 구글 회원가입
-      const googleSignupBtn = document.getElementById('googleSignupBtn');
-      if (googleSignupBtn) {
-        googleSignupBtn.addEventListener('click', async function() {
-          try {
-            await loginWithGoogle();
-            document.getElementById('loginModal').classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 이메일/비밀번호 회원가입
-      const signupButton = document.getElementById('signupButton');
-      if (signupButton) {
-        signupButton.addEventListener('click', async function() {
-          const name = document.getElementById('signup-name').value;
-          const email = document.getElementById('signup-email').value;
-          const password = document.getElementById('signup-password').value;
-          const passwordConfirm = document.getElementById('signup-password-confirm').value;
-          const terms = document.getElementById('terms').checked;
-          
-          if (!name || !email || !password) {
-            alert('모든 필수 정보를 입력해주세요');
-            return;
-          }
-          
-          if (password !== passwordConfirm) {
-            alert('비밀번호가 일치하지 않습니다');
-            return;
-          }
-          
-          if (!terms) {
-            alert('이용약관에 동의해주세요');
-            return;
-          }
-          
-          try {
-            await registerWithEmail(name, email, password);
-            document.getElementById('loginModal').classList.add('hidden');
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 비밀번호 재설정
-      const resetPasswordButton = document.getElementById('resetPasswordButton');
-      if (resetPasswordButton) {
-        resetPasswordButton.addEventListener('click', async function() {
-          const email = document.getElementById('reset-email').value;
-          
-          if (!email) {
-            alert('이메일을 입력해주세요');
-            return;
-          }
-          
-          try {
-            await resetPassword(email);
-            alert('비밀번호 재설정 이메일이 발송되었습니다');
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('forgotPasswordForm').classList.add('hidden');
-            document.getElementById('modal-title').textContent = '로그인';
-          } catch (error) {
-            handleAuthError(error);
-          }
-        });
-      }
-      
-      // 로그아웃
-      const logoutBtn = document.getElementById('logoutBtn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', async function(e) {
-          e.preventDefault();
-          try {
-            await logoutUser();
-            document.getElementById('profileDropdownMenu').classList.add('hidden');
-          } catch (error) {
-            console.error('로그아웃 에러:', error);
-          }
-        });
-      }
-      
-      // 사용자 프로필 드롭다운 메뉴
-      const userProfileBtn = document.getElementById('userProfileBtn');
-      const profileDropdownMenu = document.getElementById('profileDropdownMenu');
-      
-      if (userProfileBtn && profileDropdownMenu) {
-        userProfileBtn.addEventListener('click', function() {
-          profileDropdownMenu.classList.toggle('hidden');
-        });
-        
-        // 드롭다운 외부 클릭 시 닫기
-        document.addEventListener('click', function(e) {
-          if (userProfileBtn && profileDropdownMenu && 
-              !userProfileBtn.contains(e.target) && 
-              !profileDropdownMenu.contains(e.target)) {
-            profileDropdownMenu.classList.add('hidden');
-          }
-        });
-      }
+      console.log('웹사이트가 초기화되었습니다.');
     });
   </script>
 </body>

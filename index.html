@@ -724,42 +724,42 @@
         }
         
         // 카카오 로그인 팝업 열기
-        Kakao.Auth.login({
-          // 동의항목 설정 - 필요한 정보 범위
-          scope: 'profile_nickname, profile_image, account_email',
-          success: function(authObj) {
-            console.log('카카오 로그인 성공:', authObj);
+Kakao.Auth.login({
+  // 동의항목 설정 - 필요한 정보 범위
+  scope: 'profile_nickname, profile_image, account_email',
+  success: function(authObj) {
+    console.log('카카오 로그인 성공:', authObj);
+    
+    // 사용자 정보 요청
+    Kakao.API.request({
+      // ... 나머지 코드
+    });
+  },
+  fail: function(err) {
+    console.error('카카오 로그인 실패:', err);
+    alert('카카오 로그인에 실패했습니다.');
+  }
+});
             
             // 사용자 정보 요청
             Kakao.API.request({
-              url: '/v2/user/me',
-              success: function(res) {
-                console.log('카카오 사용자 정보:', res);
-                
-                const nickname = res.properties?.nickname || '사용자';
-                const profileImage = res.properties?.profile_image || '';
-                const email = res.kakao_account?.email || `kakao_${res.id}@example.com`;
-                
-                // 1. 로그인 성공 메시지
-                alert(`${nickname}님, 환영합니다!`);
-                
-                // 2. UI 업데이트
-                updateUserProfileUI(nickname, profileImage);
-                
-                // 3. 로그인 상태 저장 (로컬 스토리지 사용)
-                localStorage.setItem('currentUser', JSON.stringify({
-                  id: res.id,
-                  nickname: nickname,
-                  profileImage: profileImage,
-                  email: email,
-                  provider: 'kakao',
-                  loginTime: new Date().toISOString()
-                }));
-                
-                // 4. 로그인 모달 닫기
-                const loginModal = document.getElementById('loginModal');
-                if (loginModal) loginModal.classList.add('hidden');
-              },
+             url: '/v2/user/me',
+success: function(res) {
+  console.log('카카오 사용자 정보:', res);
+  
+  const nickname = res.properties?.nickname || '';
+  const profileImage = res.properties?.profile_image || '';
+  const email = res.kakao_account?.email || '';
+  
+  // 추가 정보가 필요한지 확인 (닉네임이 없거나 이메일이 없는 경우)
+  if (!nickname || !email) {
+    // 추가 정보 입력 폼 표시
+    showAdditionalInfoForm(res.id, nickname, email, profileImage);
+  } else {
+    // 모든 정보가 있으면 바로 로그인 처리
+    completeLogin(res.id, nickname, email, profileImage);
+  }
+},
               fail: function(error) {
                 console.error('카카오 사용자 정보 요청 실패:', error);
                 alert('사용자 정보를 가져오는데 실패했습니다.');
@@ -861,6 +861,125 @@
         
         // UI 업데이트
         updateUserProfileUIForLogout();
+
+        // 추가 정보 입력 폼 표시 함수
+function showAdditionalInfoForm(kakaoId, nickname, email, profileImage) {
+  // 기존 로그인 모달 내용 숨기기
+  const loginForm = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
+  const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+  
+  if (loginForm) loginForm.classList.add('hidden');
+  if (signupForm) signupForm.classList.add('hidden');
+  if (forgotPasswordForm) forgotPasswordForm.classList.add('hidden');
+  
+  // 추가 정보 입력 폼 생성
+  const modalContent = document.querySelector('#loginModal .sm\\:text-left');
+  
+  if (!modalContent) return;
+  
+  // 모달 제목 변경
+  const modalTitle = document.getElementById('modal-title');
+  if (modalTitle) modalTitle.textContent = '추가 정보 입력';
+  
+  // 추가 정보 입력 폼 HTML
+  const additionalInfoFormHtml = `
+    <div id="additionalInfoForm">
+      <p class="mb-6 text-gray-600">카카오 계정으로 회원가입을 완료하기 위해 추가 정보를 입력해주세요.</p>
+      
+      <div class="space-y-4">
+        <div>
+          <label for="kakao-nickname" class="block text-sm font-medium text-gray-700">닉네임</label>
+          <input type="text" id="kakao-nickname" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="닉네임" value="${nickname || ''}" required>
+        </div>
+        
+        <div>
+          <label for="kakao-email" class="block text-sm font-medium text-gray-700">이메일</label>
+          <input type="email" id="kakao-email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" value="${email || ''}" required>
+        </div>
+        
+        <div class="flex items-start">
+          <div class="flex items-center h-5">
+            <input id="kakao-terms" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500" required>
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="kakao-terms" class="font-medium text-gray-700">
+              <a href="#" class="text-pink-600 hover:text-pink-500">이용약관</a> 및 
+              <a href="#" class="text-pink-600 hover:text-pink-500">개인정보처리방침</a>에 동의합니다.
+            </label>
+          </div>
+        </div>
+        
+        <div>
+          <button type="button" id="completeKakaoSignupBtn" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+            가입 완료하기
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 폼 추가
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = additionalInfoFormHtml;
+  modalContent.appendChild(tempDiv.firstElementChild);
+  
+  // 가입 완료 버튼 이벤트 리스너
+  const completeKakaoSignupBtn = document.getElementById('completeKakaoSignupBtn');
+  if (completeKakaoSignupBtn) {
+    completeKakaoSignupBtn.addEventListener('click', function() {
+      const updatedNickname = document.getElementById('kakao-nickname').value;
+      const updatedEmail = document.getElementById('kakao-email').value;
+      const termsChecked = document.getElementById('kakao-terms').checked;
+      
+      if (!updatedNickname || !updatedEmail) {
+        alert('모든 필수 정보를 입력해주세요');
+        return;
+      }
+      
+      if (!termsChecked) {
+        alert('이용약관에 동의해주세요');
+        return;
+      }
+      
+      // 로그인 완료 처리
+      completeLogin(kakaoId, updatedNickname, updatedEmail, profileImage);
+      
+      // 추가 정보 폼 제거
+      const additionalInfoForm = document.getElementById('additionalInfoForm');
+      if (additionalInfoForm) additionalInfoForm.remove();
+    });
+  }
+  
+  // 로그인 모달 표시
+  const loginModal = document.getElementById('loginModal');
+  if (loginModal && loginModal.classList.contains('hidden')) {
+    loginModal.classList.remove('hidden');
+  }
+}
+
+// 로그인 완료 처리 함수
+function completeLogin(kakaoId, nickname, email, profileImage) {
+  // 1. 로그인 성공 메시지
+  alert(`${nickname}님, 환영합니다!`);
+  
+  // 2. UI 업데이트
+  updateUserProfileUI(nickname, profileImage);
+  
+  // 3. 로그인 상태 저장 (로컬 스토리지 사용)
+  localStorage.setItem('currentUser', JSON.stringify({
+    id: kakaoId,
+    nickname: nickname,
+    profileImage: profileImage,
+    email: email,
+    provider: 'kakao',
+    loginTime: new Date().toISOString()
+  }));
+  
+  // 4. 로그인 모달 닫기
+  const loginModal = document.getElementById('loginModal');
+  if (loginModal) loginModal.classList.add('hidden');
+}
         
         // 모바일 메뉴 닫기
         const mobileMenu = document.getElementById('mobileMenu');

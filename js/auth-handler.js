@@ -24,7 +24,7 @@ export function handleKakaoLogin() {
   return new Promise((resolve, reject) => {
     // 카카오 로그인 팝업 열기
     Kakao.Auth.login({
-      scope: 'profile_nickname, profile_image, account_email',
+      scope: 'profile_nickname, profile_image', // account_email 제거 (또는 사용자가 선택 동의한 경우에만 사용)
       throughTalk: false,
       persistAccessToken: true,
       success: function(authObj) {
@@ -40,7 +40,7 @@ export function handleKakaoLogin() {
               id: res.id,
               nickname: res.properties?.nickname || '사용자',
               profileImage: res.properties?.profile_image || '',
-              email: res.kakao_account?.email || '',
+              email: res.kakao_account?.email || '', // 이메일은 있으면 가져오고 없으면 빈 문자열
               provider: 'kakao'
             };
             

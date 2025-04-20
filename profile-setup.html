@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로필 설정 - 인연 매칭 서비스</title>
+    <title>프로필 설정 - 인연 찾기</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide 아이콘 -->
@@ -11,13 +11,24 @@
     <!-- 기본 스타일시트 -->
     <link rel="stylesheet" href="css/main.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-pink-50 to-purple-50 min-h-screen">
     <!-- 헤더 -->
     <header class="bg-white shadow-sm fixed w-full top-0 z-10">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center">
-                    <a href="index.html" class="text-2xl font-bold text-pink-600">인연</a>
+                    <a href="index.html" class="flex items-center">
+                        <img src="images/logo.svg" alt="로고" class="h-8 mr-2">
+                        <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">인연찾기</span>
+                    </a>
+                </div>
+                
+                <!-- 데스크탑 메뉴 -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="index.html#about" class="text-gray-700 hover:text-pink-600 transition-colors">소개</a>
+                    <a href="index.html#how-it-works" class="text-gray-700 hover:text-pink-600 transition-colors">이용방법</a>
+                    <a href="index.html#success-stories" class="text-gray-700 hover:text-pink-600 transition-colors">성공사례</a>
+                    <a href="index.html#contact" class="text-gray-700 hover:text-pink-600 transition-colors">문의하기</a>
                 </div>
                 
                 <!-- 프로필 드롭다운 (로그인 상태일 때) -->
@@ -41,35 +52,48 @@
                         </a>
                     </div>
                 </div>
+                
+                <!-- 모바일 메뉴 버튼 -->
+                <button id="mobileMenuButton" class="md:hidden text-gray-700 focus:outline-none" aria-expanded="false">
+                    <i data-lucide="menu" class="h-6 w-6"></i>
+                </button>
+            </div>
+            
+            <!-- 모바일 메뉴 -->
+            <div id="mobileMenu" class="md:hidden hidden pb-4">
+                <a href="index.html#about" class="block py-2 text-gray-700 hover:text-pink-600">소개</a>
+                <a href="index.html#how-it-works" class="block py-2 text-gray-700 hover:text-pink-600">이용방법</a>
+                <a href="index.html#success-stories" class="block py-2 text-gray-700 hover:text-pink-600">성공사례</a>
+                <a href="index.html#contact" class="block py-2 text-gray-700 hover:text-pink-600">문의하기</a>
             </div>
         </div>
     </header>
 
     <!-- 메인 컨텐츠 -->
     <main class="container mx-auto mt-24 px-4 py-8">
-        <div class="max-w-xl mx-auto bg-white rounded-lg shadow p-6">
-            <h1 class="text-2xl font-bold text-center mb-6">프로필 설정</h1>
-            <p class="text-gray-600 text-center mb-8">매칭 서비스를 이용하기 위해 프로필 정보를 입력해주세요.</p>
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow p-6 md:p-8">
+            <h1 class="text-3xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">내 인연 찾기</h1>
+            <p class="text-gray-600 text-center mb-8">잃어버린 소중한 인연을 다시 찾을 수 있도록 도와드립니다.</p>
             
-            <form id="profileForm" class="space-y-6">
+            <form id="profileForm" class="space-y-8">
                 <!-- 기본 정보 -->
-                <div>
-                    <h2 class="text-lg font-semibold mb-4">기본 정보</h2>
-                    <div class="space-y-4">
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-purple-700">내 정보</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="displayName" class="block text-sm font-medium text-gray-700">이름/닉네임</label>
-                            <input type="text" id="displayName" name="displayName" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                            <input type="text" id="displayName" name="displayName" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700">성별</label>
                             <div class="mt-1 flex space-x-4">
                                 <div class="flex items-center">
-                                    <input type="radio" id="gender-male" name="gender" value="male" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300">
+                                    <input type="radio" id="gender-male" name="gender" value="male" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300">
                                     <label for="gender-male" class="ml-2 block text-sm text-gray-700">남성</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="radio" id="gender-female" name="gender" value="female" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300">
+                                    <input type="radio" id="gender-female" name="gender" value="female" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300">
                                     <label for="gender-female" class="ml-2 block text-sm text-gray-700">여성</label>
                                 </div>
                             </div>
@@ -77,46 +101,15 @@
                         
                         <div>
                             <label for="birthYear" class="block text-sm font-medium text-gray-700">출생 연도</label>
-                            <select id="birthYear" name="birthYear" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                            <select id="birthYear" name="birthYear" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                                 <option value="">선택해주세요</option>
                                 <!-- 1970부터 현재까지 -->
                             </select>
                         </div>
                         
                         <div>
-                            <label for="birthday" class="block text-sm font-medium text-gray-700">생일</label>
-                            <div class="grid grid-cols-2 gap-4">
-                                <select id="birthMonth" name="birthMonth" class="rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
-                                    <option value="">월</option>
-                                    <option value="1">1월</option>
-                                    <option value="2">2월</option>
-                                    <option value="3">3월</option>
-                                    <option value="4">4월</option>
-                                    <option value="5">5월</option>
-                                    <option value="6">6월</option>
-                                    <option value="7">7월</option>
-                                    <option value="8">8월</option>
-                                    <option value="9">9월</option>
-                                    <option value="10">10월</option>
-                                    <option value="11">11월</option>
-                                    <option value="12">12월</option>
-                                </select>
-                                <select id="birthDay" name="birthDay" class="rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
-                                    <option value="">일</option>
-                                    <!-- 일은 자바스크립트로 동적 생성 -->
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 추가 정보 -->
-                <div>
-                    <h2 class="text-lg font-semibold mb-4">추가 정보</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label for="location" class="block text-sm font-medium text-gray-700">지역</label>
-                            <select id="location" name="location" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                            <label for="location" class="block text-sm font-medium text-gray-700">현재 거주 지역</label>
+                            <select id="location" name="location" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                                 <option value="">지역을 선택하세요</option>
                                 <option value="서울">서울</option>
                                 <option value="경기">경기</option>
@@ -137,68 +130,121 @@
                             </select>
                         </div>
                         
+                        <div class="md:col-span-2">
+                            <label for="selfDescription" class="block text-sm font-medium text-gray-700">나의 외모/특징</label>
+                            <textarea id="selfDescription" name="selfDescription" rows="3" placeholder="키, 체형, 머리 스타일, 눈/코/입 특징, 말투, 습관 등 본인을 식별할 수 있는 특징을 적어주세요." class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 찾는 인연 정보 -->
+                <div class="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-pink-700">찾고 있는 인연 정보</h2>
+                    <div class="space-y-6">
                         <div>
-                            <label for="phoneNumber" class="block text-sm font-medium text-gray-700">연락처 (선택)</label>
-                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="'-' 없이 입력하세요" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                            <label for="encounterYear" class="block text-sm font-medium text-gray-700">만났던 연도</label>
+                            <select id="encounterYear" name="encounterYear" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                                <option value="">선택해주세요</option>
+                                <!-- 1990부터 현재까지 -->
+                            </select>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">관심사 (최대 5개)</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-movie" name="interests" value="영화" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-movie" class="ml-2 block text-sm text-gray-700">영화</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-music" name="interests" value="음악" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-music" class="ml-2 block text-sm text-gray-700">음악</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-travel" name="interests" value="여행" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-travel" class="ml-2 block text-sm text-gray-700">여행</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-food" name="interests" value="맛집" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-food" class="ml-2 block text-sm text-gray-700">맛집</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-exercise" name="interests" value="운동" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-exercise" class="ml-2 block text-sm text-gray-700">운동</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-reading" name="interests" value="독서" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-reading" class="ml-2 block text-sm text-gray-700">독서</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-game" name="interests" value="게임" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-game" class="ml-2 block text-sm text-gray-700">게임</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-outdoor" name="interests" value="아웃도어" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-outdoor" class="ml-2 block text-sm text-gray-700">아웃도어</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="interest-art" name="interests" value="예술" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                                    <label for="interest-art" class="ml-2 block text-sm text-gray-700">예술</label>
-                                </div>
+                            <label for="encounterLocation" class="block text-sm font-medium text-gray-700">만났던 장소</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <select id="encounterRegion" name="encounterRegion" class="rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                                    <option value="">지역 선택</option>
+                                    <option value="서울">서울</option>
+                                    <option value="경기">경기</option>
+                                    <option value="인천">인천</option>
+                                    <!-- 다른 지역들 -->
+                                </select>
+                                <input type="text" id="encounterLocationDetail" name="encounterLocationDetail" placeholder="상세 장소 (예: 강남역 카페, 대학로 서점)" class="rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500">
                             </div>
                         </div>
                         
                         <div>
-                            <label for="bio" class="block text-sm font-medium text-gray-700">자기소개</label>
-                            <textarea id="bio" name="bio" rows="3" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500"></textarea>
+                            <label for="encounterSituation" class="block text-sm font-medium text-gray-700">만남의 상황</label>
+                            <textarea id="encounterSituation" name="encounterSituation" rows="3" placeholder="어떤 상황에서 만났는지 자세히 설명해주세요. (예: 대학교 새내기 MT에서, 군대에서 같은 내무반, 아르바이트 동료)" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="personDescription" class="block text-sm font-medium text-gray-700">찾는 사람의 특징</label>
+                            <textarea id="personDescription" name="personDescription" rows="3" placeholder="찾고 계신 분의 이름(알고 있다면), 성별, 나이, 외모, 특징적인 말투나 행동 등을 자세히 적어주세요." class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700">전하고 싶은 메시지</label>
+                            <textarea id="message" name="message" rows="3" placeholder="찾는 분에게 전하고 싶은 메시지가 있다면 적어주세요." class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 연락처 정보 -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-purple-700">연락처 정보</h2>
+                    <p class="text-sm text-gray-600 mb-4">매칭이 성공했을 때만 상대방에게 공개됩니다.</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="phoneNumber" class="block text-sm font-medium text-gray-700">연락처</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="'-' 없이 입력하세요" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                        
+                        <div>
+                            <label for="socialMedia" class="block text-sm font-medium text-gray-700">SNS 계정 (선택)</label>
+                            <input type="text" id="socialMedia" name="socialMedia" placeholder="인스타그램, 페이스북 등" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                         </div>
                     </div>
                 </div>
                 
                 <div class="pt-4">
-                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                        프로필 저장하기
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-all">
+                        인연 찾기 등록하기
                     </button>
                 </div>
             </form>
         </div>
     </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-gray-800 text-white mt-16 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">인연찾기</h3>
+                    <p class="text-gray-400">잃어버린 소중한 인연을 다시 만나보세요.</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3">서비스</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white">이용방법</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">성공사례</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">자주 묻는 질문</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3">회사</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white">소개</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">블로그</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">채용</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3">법적 정보</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white">이용약관</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">개인정보처리방침</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500">
+                &copy; 2025 인연찾기. All rights reserved.
+            </div>
+        </div>
+    </footer>
 
     <!-- 스크립트 -->
     <script type="module">
@@ -213,48 +259,24 @@
         
         // 날짜 옵션 초기화
         function initDateOptions() {
-            // 연도 옵션 추가 (1970년부터 현재까지)
+            // 연도 옵션 추가 (출생 연도)
             const birthYearSelect = document.getElementById('birthYear');
             const currentYear = new Date().getFullYear();
-            for (let year = currentYear; year >= 1970; year--) {
+            for (let year = currentYear - 15; year >= 1940; year--) {
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year;
                 birthYearSelect.appendChild(option);
             }
             
-            // 일 옵션 업데이트 함수
-            function updateDayOptions() {
-                const month = parseInt(document.getElementById('birthMonth').value) || 0;
-                const birthDaySelect = document.getElementById('birthDay');
-                
-                // 기존 옵션 제거
-                while (birthDaySelect.options.length > 1) {
-                    birthDaySelect.remove(1);
-                }
-                
-                if (month === 0) return;
-                
-                // 월에 따른 일수 계산
-                let daysInMonth = 31;
-                if ([4, 6, 9, 11].includes(month)) {
-                    daysInMonth = 30;
-                } else if (month === 2) {
-                    // 2월은 28일로 단순화 (윤년 고려 X)
-                    daysInMonth = 28;
-                }
-                
-                // 일 옵션 추가
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const option = document.createElement('option');
-                    option.value = day;
-                    option.textContent = day;
-                    birthDaySelect.appendChild(option);
-                }
+            // 연도 옵션 추가 (만남 연도)
+            const encounterYearSelect = document.getElementById('encounterYear');
+            for (let year = currentYear; year >= 1990; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                encounterYearSelect.appendChild(option);
             }
-            
-            // 월 선택 시 일 옵션 업데이트
-            document.getElementById('birthMonth').addEventListener('change', updateDayOptions);
         }
         
         // 프로필 폼 제출 처리
@@ -275,53 +297,59 @@
                 const displayName = document.getElementById('displayName').value.trim();
                 const gender = document.querySelector('input[name="gender"]:checked')?.value;
                 const birthYear = document.getElementById('birthYear').value;
-                const birthMonth = document.getElementById('birthMonth').value;
-                const birthDay = document.getElementById('birthDay').value;
                 const location = document.getElementById('location').value;
+                const selfDescription = document.getElementById('selfDescription').value.trim();
+                const encounterYear = document.getElementById('encounterYear').value;
+                const encounterSituation = document.getElementById('encounterSituation').value.trim();
+                const personDescription = document.getElementById('personDescription').value.trim();
                 
-                if (!displayName || !gender || !birthYear || !birthMonth || !birthDay || !location) {
+                if (!displayName || !gender || !birthYear || !location || !selfDescription || 
+                    !encounterYear || !encounterSituation || !personDescription) {
                     alert('필수 항목을 모두 입력해주세요.');
                     return;
                 }
                 
-                // 관심사 수집
-                const interestCheckboxes = document.querySelectorAll('input[name="interests"]:checked');
-                if (interestCheckboxes.length > 5) {
-                    alert('관심사는 최대 5개까지 선택 가능합니다.');
-                    return;
-                }
-                
-                const interests = Array.from(interestCheckboxes).map(cb => cb.value);
-                
-                // 생년월일 포맷팅
-                const birthdate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
-                
-                // 추가 정보
+                // 모든 폼 데이터 수집
+                const encounterRegion = document.getElementById('encounterRegion').value;
+                const encounterLocationDetail = document.getElementById('encounterLocationDetail').value.trim();
+                const message = document.getElementById('message').value.trim();
                 const phoneNumber = document.getElementById('phoneNumber').value.trim();
-                const bio = document.getElementById('bio').value.trim();
+                const socialMedia = document.getElementById('socialMedia').value.trim();
                 
                 try {
-                    // Firestore에 프로필 정보 저장
+                    // Firestore에 프로필 및 인연 찾기 정보 저장
                     await setDoc(doc(db, "users", user.uid), {
+                        // 기본 정보
                         displayName,
                         gender,
                         birthYear: parseInt(birthYear),
-                        birthMonth: parseInt(birthMonth),
-                        birthDay: parseInt(birthDay),
-                        birthdate,
                         location,
+                        selfDescription,
                         phoneNumber,
-                        interests,
-                        bio,
+                        socialMedia,
+                        
+                        // 프로필 완료 상태
                         profileCompleted: true,
-                        updatedAt: new Date()
+                        updatedAt: new Date(),
+                        
+                        // 인연 찾기 정보
+                        connections: [{
+                            encounterYear: parseInt(encounterYear),
+                            encounterRegion,
+                            encounterLocationDetail,
+                            encounterSituation,
+                            personDescription,
+                            message,
+                            createdAt: new Date(),
+                            status: 'active'
+                        }]
                     }, { merge: true });
                     
-                    alert('프로필이 저장되었습니다!');
+                    alert('인연 찾기 정보가 등록되었습니다!');
                     window.location.href = 'index.html'; // 메인 페이지로 이동
                 } catch (error) {
-                    console.error('프로필 저장 오류:', error);
-                    alert('프로필 저장 중 오류가 발생했습니다.');
+                    console.error('정보 저장 오류:', error);
+                    alert('정보 저장 중 오류가 발생했습니다.');
                 }
             });
         }
@@ -337,7 +365,11 @@
                     const userData = userDoc.data();
                     
                     // 기본 정보 설정
-                    document.getElementById('displayName').value = userData.displayName || user.displayName || '';
+                    if (userData.displayName) {
+                        document.getElementById('displayName').value = userData.displayName;
+                    } else if (user.displayName) {
+                        document.getElementById('displayName').value = user.displayName;
+                    }
                     
                     // 성별 설정
                     if (userData.gender) {
@@ -348,23 +380,15 @@
                     if (userData.birthYear) {
                         document.getElementById('birthYear').value = userData.birthYear;
                     }
-                    if (userData.birthMonth) {
-                        document.getElementById('birthMonth').value = userData.birthMonth;
-                        
-                        // 일 옵션 업데이트 후 값 설정
-                        const event = new Event('change');
-                        document.getElementById('birthMonth').dispatchEvent(event);
-                        
-                        if (userData.birthDay) {
-                            setTimeout(() => {
-                                document.getElementById('birthDay').value = userData.birthDay;
-                            }, 100);
-                        }
-                    }
                     
                     // 지역 설정
                     if (userData.location) {
                         document.getElementById('location').value = userData.location;
+                    }
+                    
+                    // 자기 설명 설정
+                    if (userData.selfDescription) {
+                        document.getElementById('selfDescription').value = userData.selfDescription;
                     }
                     
                     // 연락처 설정
@@ -372,24 +396,64 @@
                         document.getElementById('phoneNumber').value = userData.phoneNumber;
                     }
                     
-                    // 관심사 설정
-                    if (userData.interests && Array.isArray(userData.interests)) {
-                        userData.interests.forEach(interest => {
-                            const checkbox = document.querySelector(`input[name="interests"][value="${interest}"]`);
-                            if (checkbox) {
-                                checkbox.checked = true;
-                            }
-                        });
+                    // SNS 설정
+                    if (userData.socialMedia) {
+                        document.getElementById('socialMedia').value = userData.socialMedia;
                     }
                     
-                    // 자기소개 설정
-                    if (userData.bio) {
-                        document.getElementById('bio').value = userData.bio;
+                    // 가장 최근 인연 찾기 정보 로드 (있다면)
+                    if (userData.connections && userData.connections.length > 0) {
+                        const lastConnection = userData.connections[userData.connections.length - 1];
+                        
+                        if (lastConnection.encounterYear) {
+                            document.getElementById('encounterYear').value = lastConnection.encounterYear;
+                        }
+                        
+                        if (lastConnection.encounterRegion) {
+                            document.getElementById('encounterRegion').value = lastConnection.encounterRegion;
+                        }
+                        
+                        if (lastConnection.encounterLocationDetail) {
+                            document.getElementById('encounterLocationDetail').value = lastConnection.encounterLocationDetail;
+                        }
+                        
+                        if (lastConnection.encounterSituation) {
+                            document.getElementById('encounterSituation').value = lastConnection.encounterSituation;
+                        }
+                        
+                        if (lastConnection.personDescription) {
+                            document.getElementById('personDescription').value = lastConnection.personDescription;
+                        }
+                        
+                        if (lastConnection.message) {
+                            document.getElementById('message').value = lastConnection.message;
+                        }
                     }
                 }
             } catch (error) {
                 console.error('프로필 로드 오류:', error);
             }
+        }
+        
+        // 모바일 메뉴 설정
+        function setupMobileMenu() {
+            const menuButton = document.getElementById('mobileMenuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuButton.addEventListener('click', function() {
+                const expanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !expanded);
+                
+                if (!expanded) {
+                    mobileMenu.classList.remove('hidden');
+                    this.innerHTML = '<i data-lucide="x" class="h-6 w-6"></i>';
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    this.innerHTML = '<i data-lucide="menu" class="h-6 w-6"></i>';
+                }
+                
+                lucide.createIcons();
+            });
         }
         
         // 로그아웃 처리
@@ -440,6 +504,9 @@
             
             // 프로필 폼 설정
             setupProfileForm();
+            
+            // 모바일 메뉴 설정
+            setupMobileMenu();
             
             // 로그아웃 기능 설정
             setupLogout();

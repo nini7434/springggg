@@ -795,23 +795,21 @@
     }
     
     // 카카오 로그인 버튼 이벤트 리스너
-    const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
-    if (kakaoLoginBtn) {
-      kakaoLoginBtn.addEventListener('click', function() {
-        console.log('카카오 로그인 버튼 클릭됨');
-        
-        if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
-          alert('카카오 SDK가 초기화되지 않았습니다');
-          return;
-        }
+    kakaoLoginBtn.addEventListener('click', function() {
+  console.log('카카오 로그인 버튼 클릭됨');
+  
+  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
+    alert('카카오 SDK가 초기화되지 않았습니다');
+    return;
+  }
         
         // 카카오 로그인 팝업 열기
-        Kakao.Auth.login({
-          scope: 'profile_nickname, profile_image, account_email',
-          throughTalk: false,  // 카카오톡이 아닌 웹 페이지에서 로그인 진행
-          persistAccessToken: true, // 액세스 토큰 유지
-          success: function(authObj) {
-            console.log('카카오 로그인 성공:', authObj);
+         Kakao.Auth.login({
+    // 필수 동의 항목만 요청
+    scope: 'profile_nickname', // profile_image와 account_email 제거
+    throughTalk: false,  // 카카오톡이 아닌 웹 페이지에서 로그인 진행
+    success: function(authObj) {
+      console.log('카카오 로그인 성공:', authObj);
             
             // 사용자 정보 요청
             Kakao.API.request({
@@ -834,7 +832,7 @@
           },
           fail: function(err) {
             console.error('카카오 로그인 실패:', err);
-            alert('카카오 로그인에 실패했습니다.');
+      alert('카카오 로그인에 실패했습니다. 오류: ' + JSON.stringify(err));
           }
         });
       });
@@ -1020,38 +1018,84 @@
     }
     
     // 회원가입 버튼 이벤트 리스너
-    const signupButton = document.getElementById('signupButton');
-    if (signupButton) {
-      signupButton.addEventListener('click', function() {
-        const name = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        const passwordConfirm = document.getElementById('signup-password-confirm').value;
-        const termsChecked = document.getElementById('terms').checked;
-        
-        if (!name || !email || !password || !passwordConfirm) {
-          alert('모든 필수 정보를 입력해주세요.');
-          return;
-        }
-        
-        if (password !== passwordConfirm) {
-          alert('비밀번호가 일치하지 않습니다.');
-          return;
-        }
-        
-        if (!termsChecked) {
-          alert('이용약관에 동의해주세요.');
-          return;
-        }
-        
-        // 간단한 테스트 회원가입 (실제로는 Firebase 인증 사용)
-        alert(`${name}님, 회원가입이 완료되었습니다. 로그인해주세요.`);
-        
-        // 로그인 폼으로 전환
-        loginForm.classList.remove('hidden');
-        signupForm.classList.add('hidden');
-        modalTitle.textContent = '로그인';
-      });
+signupButton.addEventListener('click', function() {
+  const name = document.getElementById('signup-name').value;
+  const email = document.getElementById('signup-email').value;
+  const password = document.getElementById('signup-password').value;
+  const passwordConfirm = document.getElementById('signup-password-confirm').value;
+  const termsChecked = document.getElementById('terms').checked;
+  
+  if (!name || !email || !password || !passwordConfirm) {
+    alert('모든 필수 정보를 입력해주세요.');
+    return;
+  }
+  
+  if (password !== passwordConfirm) {
+    alert('비밀번호가 일치하지 않습니다.');
+    return;
+  }
+  
+  if (!termsChecked) {
+    alert('이용약관에 동의해주세요.');
+    return;
+  }
+  
+  // 사용자 정보를 로컬 스토리지에 저장
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  
+  // 이메일 중복 확인
+  const existingUser = users.find(user => user.email === email);
+  if (existingUser) {
+    alert('이미 가입된 이메일입니다.');
+    return;
+  }
+  
+  // 새 사용자 추가
+  users.push({
+    id: 'user_' + Date.now(),
+    name: name,
+    email: email,
+    password: password, // 실제로는 암호화해야 함
+    createdAt: new Date().toISOString()
+  });
+  
+  localStorage.setItem('users', JSON.stringify(users));
+  
+  alert(`${name}님, 회원가입이 완료되었습니다. 로그인해주세요.`);
+  
+  // 로그인 폼으로 전환
+  loginForm.classList.remove('hidden');
+  signupForm.classList.add('hidden');
+  modalTitle.textContent = '로그인';
+});
+
+// 이메일 로그인 버튼 이벤트 리스너 수정
+loginButton.addEventListener('click', function() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  
+  if (!email || !password) {
+    alert('이메일과 비밀번호를 모두 입력해주세요.');
+    return;
+  }
+  
+  // 테스트 계정 확인 (개발 중 편의를 위한 것)
+  if (email === 'test@example.com' && password === 'password') {
+    completeLogin('test123', '테스트 사용자', email, '');
+    return;
+  }
+  
+  // 사용자 정보 확인
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const user = users.find(u => u.email === email && u.password === password);
+  
+  if (user) {
+    // 로그인 성공
+    completeLogin(user.id, user.name, user.email, '');
+  } else {
+    alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+  }
+});
     }
     
     // 비밀번호 재설정 버튼 이벤트 리스너
@@ -1115,7 +1159,32 @@
         });
       }
     }
-    
+
+// 구글 로그인 버튼 이벤트 리스너
+googleLoginBtn.addEventListener('click', function() {
+  // Firebase Auth 가져오기
+  const auth = firebase.auth();
+  const provider = new firebase.auth.GoogleAuthProvider();
+  
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      const user = result.user;
+      console.log('구글 로그인 성공:', user);
+      
+      // 로그인 완료 처리
+      completeLogin(
+        user.uid,
+        user.displayName || '사용자',
+        user.email || '',
+        user.photoURL || ''
+      );
+    })
+    .catch((error) => {
+      console.error('구글 로그인 에러:', error);
+      alert('구글 로그인에 실패했습니다. 다른 로그인 방법을 이용해주세요.');
+    });
+});
+  
     // 페이지 로드 시 로그인 상태 확인
     checkLoginStatus();
     

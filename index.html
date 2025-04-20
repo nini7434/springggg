@@ -961,4 +961,194 @@
         if (userDisplayName) userDisplayName.textContent = displayName || '사용자';
         
         const userAvatarImg = document.getElementById('userAvatarImg');
-        if
+        if (userAvatarImg) {
+          if (photoURL) {
+            userAvatarImg.src = photoURL;
+          } else {
+            const initial = (displayName || '사용자')[0].toUpperCase();
+            userAvatarImg.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23EC4899'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='12' fill='white'%3E${initial}%3C/text%3E%3C/svg%3E`;
+          }
+        }
+        
+        // 모바일 UI 업데이트
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
+        
+        const mobileUserProfile = document.getElementById('mobileUserProfile');
+        if (mobileUserProfile) mobileUserProfile.classList.remove('hidden');
+        
+        const mobileUserDisplayName = document.getElementById('mobileUserDisplayName');
+        if (mobileUserDisplayName) mobileUserDisplayName.textContent = displayName || '사용자';
+        
+        const mobileUserAvatarImg = document.getElementById('mobileUserAvatarImg');
+        if (mobileUserAvatarImg) {
+          if (photoURL) {
+            mobileUserAvatarImg.src = photoURL;
+          } else {
+            const initial = (displayName || '사용자')[0].toUpperCase();
+            mobileUserAvatarImg.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23EC4899'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='12' fill='white'%3E${initial}%3C/text%3E%3C/svg%3E`;
+          }
+        }
+      }
+      
+      // 로그아웃 함수
+      function logout() {
+        // 1. 로컬 스토리지에서 사용자 정보 삭제
+        localStorage.removeItem('currentUser');
+        
+        // 2. 카카오 로그아웃 (카카오로 로그인한 경우)
+        if (typeof Kakao !== 'undefined' && Kakao.Auth.getAccessToken()) {
+          Kakao.Auth.logout(function() {
+            console.log('카카오 로그아웃 성공');
+          });
+        }
+        
+        // 3. UI 업데이트
+        updateUserProfileUIForLogout();
+        
+        // 4. 로그아웃 메시지
+        alert('로그아웃 되었습니다.');
+      }
+      
+      // 로그아웃 후 UI 업데이트 함수
+      function updateUserProfileUIForLogout() {
+        // 헤더 로그인 버튼 표시
+        const headerLoginBtn = document.getElementById('headerLoginBtn');
+        if (headerLoginBtn) headerLoginBtn.classList.remove('hidden');
+        
+        // 사용자 프로필 영역 숨기기
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+        if (userProfileDropdown) userProfileDropdown.classList.add('hidden');
+        
+        // 모바일 UI 업데이트
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        if (mobileLoginBtn) mobileLoginBtn.classList.remove('hidden');
+        
+        const mobileUserProfile = document.getElementById('mobileUserProfile');
+        if (mobileUserProfile) mobileUserProfile.classList.add('hidden');
+      }
+      
+      // 로그아웃 버튼 이벤트 리스너
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          logout();
+          
+          // 드롭다운 메뉴 닫기
+          const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+          if (profileDropdownMenu) {
+            profileDropdownMenu.classList.add('hidden');
+          }
+        });
+      }
+      
+      // 모바일 로그아웃 버튼 이벤트 리스너
+      const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+      if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          logout();
+          
+          // 모바일 메뉴 닫기
+          const mobileMenu = document.getElementById('mobileMenu');
+          if (mobileMenu) {
+            mobileMenu.classList.add('hidden');
+          }
+        });
+      }
+      
+      // 프로필 드롭다운 메뉴 토글
+      const userProfileBtn = document.getElementById('userProfileBtn');
+      const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+      
+      if (userProfileBtn && profileDropdownMenu) {
+        userProfileBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          profileDropdownMenu.classList.toggle('hidden');
+          
+          // Lucide 아이콘 새로고침
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+          }
+        });
+        
+        // 외부 클릭 시 드롭다운 닫기
+        document.addEventListener('click', function(e) {
+          if (!userProfileBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
+            profileDropdownMenu.classList.add('hidden');
+          }
+        });
+      }
+      
+      // 메뉴 항목 클릭 시 모바일 메뉴 닫기
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            e.preventDefault();
+            window.scrollTo({
+              top: targetElement.offsetTop - 100,
+              behavior: 'smooth'
+            });
+            
+            // 모바일 메뉴 닫기
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuButton = document.getElementById('mobileMenuButton');
+            if (mobileMenu && menuButton && window.innerWidth < 768) {
+              mobileMenu.classList.add('hidden');
+              menuButton.setAttribute('aria-expanded', 'false');
+              menuButton.innerHTML = '<i data-lucide="menu" class="h-6 w-6"></i>';
+              lucide.createIcons();
+            }
+          }
+        });
+      });
+      
+      // 페이지 로드 시 로그인 상태 확인
+      function checkLoginStatus() {
+        // 로컬 스토리지에서 사용자 정보 확인
+        const currentUser = localStorage.getItem('currentUser');
+        
+        if (currentUser) {
+          try {
+            const userData = JSON.parse(currentUser);
+            // 로그인 정보가 24시간 이내인지 확인
+            const loginTime = new Date(userData.loginTime);
+            const currentTime = new Date();
+            const hoursSinceLogin = (currentTime - loginTime) / (1000 * 60 * 60);
+            
+            if (hoursSinceLogin < 24) {
+              // 24시간 이내라면 자동 로그인
+              console.log('저장된 로그인 정보로 자동 로그인:', userData.nickname);
+              updateUserProfileUI(userData.nickname, userData.profileImage);
+              return;
+            }
+          } catch (error) {
+            console.error('저장된 로그인 정보 처리 중 오류:', error);
+          }
+        }
+        
+        // 카카오 로그인 상태 확인
+        if (typeof Kakao !== 'undefined' && Kakao.Auth.getAccessToken()) {
+          Kakao.API.request({
+            url: '/v2/user/me',
+            success: function(res) {
+              console.log('카카오 자동 로그인 성공:', res);
+              const nickname = res.properties?.nickname || '사용자';
+              const profileImage = res.properties?.profile_image || '';
+              updateUserProfileUI(nickname, profileImage);
+            },
+            fail: function(error) {
+              console.error('카카오 자동 로그인 실패:', error);
+            }
+          });
+        }
+      }
+      
+      // 페이지 로드 시 로그인 상태 확인
+      checkLoginStatus();

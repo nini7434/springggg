@@ -1,8 +1,9 @@
-// 카카오 초기화 함수 업데이트
+// auth-handler.js - 인증 관련 핸들러 함수 모음
+
+// 카카오 초기화 함수
 export function initializeKakao() {
   if (typeof Kakao !== 'undefined') {
     if (!Kakao.isInitialized()) {
-      // 실제 카카오 JavaScript 키가 맞는지 확인하세요
       Kakao.init('9bd5d7401c90c3e6435c23a3cbb46272');
       console.log('카카오 SDK 초기화 상태:', Kakao.isInitialized());
     }
@@ -11,70 +12,171 @@ export function initializeKakao() {
   }
 }
 
-// 카카오 로그인 처리 함수 추가
+// 카카오 로그인 처리 함수
 export function handleKakaoLogin() {
-  console.log('카카오 로그인 버튼 클릭됨');
+  console.log('카카오 로그인 시도');
   
   if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
     alert('카카오 SDK가 초기화되지 않았습니다');
-    return;
+    return Promise.reject('카카오 SDK 초기화 실패');
   }
   
-  // 카카오 로그인 팝업 열기
-  Kakao.Auth.login({
-    // 필요한 동의 항목 설정
-    scope: 'profile_nickname, profile_image, account_email',
-    // 동의 화면 항상 표시 설정
-    throughTalk: false,  // 카카오톡이 아닌 웹 페이지에서 로그인 진행
-    persistAccessToken: true, // 액세스 토큰 유지
-    success: function(authObj) {
-      console.log('카카오 로그인 성공:', authObj);
-      
-      // 사용자 정보 요청
-      Kakao.API.request({
-        url: '/v2/user/me',
-        success: function(res) {
-          console.log('카카오 사용자 정보:', res);
-          
-          const nickname = res.properties?.nickname || '';
-          const profileImage = res.properties?.profile_image || '';
-          const email = res.kakao_account?.email || '';
-          
-          // 로그인 완료
-          completeLogin(res.id, nickname, email, profileImage);
-        },
-        fail: function(error) {
-          console.error('카카오 사용자 정보 요청 실패:', error);
-          alert('사용자 정보를 가져오는데 실패했습니다.');
-        }
+  return new Promise((resolve, reject) => {
+    // 카카오 로그인 팝업 열기
+    Kakao.Auth.login({
+      scope: 'profile_nickname, profile_image, account_email',
+      throughTalk: false,
+      persistAccessToken: true,
+      success: function(authObj) {
+        console.log('카카오 로그인 성공:', authObj);
+        
+        // 사용자 정보 요청
+        Kakao.API.request({
+          url: '/v2/user/me',
+          success: function(res) {
+            console.log('카카오 사용자 정보:', res);
+            
+            const userInfo = {
+              id: res.id,
+              nickname: res.properties?.nickname || '사용자',
+              profileImage: res.properties?.profile_image || '',
+              email: res.kakao_account?.email || '',
+              provider: 'kakao'
+            };
+            
+            resolve(userInfo);
+          },
+          fail: function(error) {
+            console.error('카카오 사용자 정보 요청 실패:', error);
+            reject('사용자 정보를 가져오는데 실패했습니다.');
+          }
+        });
+      },
+      fail: function(err) {
+        console.error('카카오 로그인 실패:', err);
+        reject('카카오 로그인에 실패했습니다.');
+      }
+    });
+  });
+}
+
+// 카카오 로그아웃 처리 함수
+export function handleKakaoLogout() {
+  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
+    console.warn('카카오 SDK가 초기화되지 않았습니다');
+    return Promise.resolve();
+  }
+  
+  return new Promise((resolve) => {
+    if (Kakao.Auth.getAccessToken()) {
+      Kakao.Auth.logout(() => {
+        console.log('카카오 로그아웃 성공');
+        resolve();
       });
-    },
-    fail: function(err) {
-      console.error('카카오 로그인 실패:', err);
-      alert('카카오 로그인에 실패했습니다.');
+    } else {
+      resolve();
     }
   });
 }
 
-// 로그인 완료 헬퍼 함수 추가
-export function completeLogin(userId, nickname, email, profileImage) {
-  // 1. 성공 메시지 표시
-  alert(`${nickname}님, 환영합니다!`);
+// 로그인 상태 확인 함수
+export function checkLoginStatus() {
+  // 로컬 스토리지에서 사용자 정보 확인
+  const currentUser = localStorage.getItem('currentUser');
   
-  // 2. UI 업데이트
-  updateUserProfileUI(nickname, profileImage);
+  if (currentUser) {
+    try {
+      const userData = JSON.parse(currentUser);
+      // 로그인 정보가 24시간 이내인지 확인
+      const loginTime = new Date(userData.loginTime);
+      const currentTime = new Date();
+      const hoursSinceLogin = (currentTime - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursSinceLogin < 24) {
+        // 24시간 이내라면 자동 로그인
+        console.log('저장된 로그인 정보로 자동 로그인:', userData.nickname);
+        return userData;
+      }
+    } catch (error) {
+      console.error('저장된 로그인 정보 처리 중 오류:', error);
+    }
+  }
   
-  // 3. 로그인 상태 저장 (localStorage)
-  localStorage.setItem('currentUser', JSON.stringify({
-    id: userId,
-    nickname: nickname,
-    profileImage: profileImage,
-    email: email,
-    provider: 'kakao',
+  // 카카오 로그인 상태 확인
+  if (typeof Kakao !== 'undefined' && Kakao.isInitialized() && Kakao.Auth.getAccessToken()) {
+    return new Promise((resolve, reject) => {
+      Kakao.API.request({
+        url: '/v2/user/me',
+        success: function(res) {
+          console.log('카카오 자동 로그인 성공:', res);
+          const userInfo = {
+            id: res.id,
+            nickname: res.properties?.nickname || '사용자',
+            profileImage: res.properties?.profile_image || '',
+            email: res.kakao_account?.email || '',
+            provider: 'kakao',
+            loginTime: new Date().toISOString()
+          };
+          
+          // 로컬 스토리지 업데이트
+          localStorage.setItem('currentUser', JSON.stringify(userInfo));
+          
+          resolve(userInfo);
+        },
+        fail: function(error) {
+          console.error('카카오 자동 로그인 실패:', error);
+          reject(null);
+        }
+      });
+    });
+  }
+  
+  return null;
+}
+
+// 로그인 완료 처리 함수
+export function completeLogin(userInfo) {
+  if (!userInfo) return;
+  
+  // 로그인 상태 저장
+  const userData = {
+    ...userInfo,
     loginTime: new Date().toISOString()
-  }));
+  };
   
-  // 4. 로그인 모달 닫기
-  const loginModal = document.getElementById('loginModal');
-  if (loginModal) loginModal.classList.add('hidden');
+  localStorage.setItem('currentUser', JSON.stringify(userData));
+  
+  return userData;
+}
+
+// 로그아웃 처리 함수
+export function handleLogout() {
+  // 로컬 스토리지에서 사용자 정보 삭제
+  localStorage.removeItem('currentUser');
+  
+  // 카카오 로그아웃
+  return handleKakaoLogout();
+}
+
+// Firebase 인증 상태 관찰자 설정 (Firebase 사용 시)
+export function setupAuthStateObserver(auth, callback) {
+  if (!auth) return;
+  
+  return auth.onAuthStateChanged((user) => {
+    if (user) {
+      console.log('Firebase 인증: 로그인 상태');
+      const userInfo = {
+        id: user.uid,
+        nickname: user.displayName || '사용자',
+        profileImage: user.photoURL || '',
+        email: user.email || '',
+        provider: 'firebase',
+        loginTime: new Date().toISOString()
+      };
+      callback(userInfo);
+    } else {
+      console.log('Firebase 인증: 로그아웃 상태');
+      callback(null);
+    }
+  });
 }

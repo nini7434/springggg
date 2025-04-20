@@ -674,7 +674,7 @@
   
  <!-- index.html의 기존 스크립트 부분을 이 코드로 대체하세요 -->
 <script>
- // DOM이 로드되면 실행
+// DOM이 로드되면 실행
 document.addEventListener('DOMContentLoaded', function() {
   // Lucide 아이콘 초기화
   if (typeof lucide !== 'undefined') {
@@ -704,21 +704,19 @@ document.addEventListener('DOMContentLoaded', function() {
     measurementId: "G-Q79MWQPK8J"
   };
   
-  // Firebase 초기화 (이미 초기화되어 있지 않은 경우)
-document.addEventListener('DOMContentLoaded', function() {
-    const firebaseConfig = {
-      apiKey: "AIzaSyCXWLanNJmOcVG43-VPHxwEhUOruPbYM3A",
-      authDomain: "spring-again-5beef.firebaseapp.com",
-      projectId: "spring-again-5beef",
-      storageBucket: "spring-again-5beef.appspot.com",
-      messagingSenderId: "230998888543",
-      appId: "1:230998888543:web:838ddfcde96b275516cbea",
-      measurementId: "G-Q79MWQPK8J"
-    };
-
-      // Firebase 직접 초기화
-    firebase.initializeApp(firebaseConfig);
-  };
+  // Firebase 초기화
+  try {
+    if (typeof firebase !== 'undefined') {
+      if (firebase.apps.length === 0) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      console.log('Firebase 초기화 성공');
+    } else {
+      console.warn('Firebase SDK가 로드되지 않았습니다');
+    }
+  } catch (error) {
+    console.error('Firebase 초기화 오류:', error);
+  }
   
   // 모달 관련 요소들
   const loginModal = document.getElementById('loginModal');
@@ -1284,5 +1282,6 @@ document.addEventListener('DOMContentLoaded', function() {
   checkLoginStatus();
   
   console.log('웹사이트가 초기화되었습니다.');
+});
   });
 </script>

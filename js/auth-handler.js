@@ -22,7 +22,7 @@ export function handleKakaoLogin() {
   }
   
   return new Promise((resolve, reject) => {
-    // 카카오 로그인 팝업 열기 - 기본 동의 항목만 사용
+    // 카카오 로그인 팝업 열기 - 기본 동의 항목만 사용(scope 제거)
     Kakao.Auth.login({
       success: function(authObj) {
         console.log('카카오 로그인 성공:', authObj);
@@ -38,14 +38,13 @@ export function handleKakaoLogin() {
               nickname: res.properties?.nickname || '사용자',
               profileImage: res.properties?.profile_image || '',
               email: res.kakao_account?.email || '',
-              provider: 'kakao'
+              provider: 'kakao',
+              loginTime: new Date().toISOString(),
+              profileCompleted: false // 기본값은 false로 설정
             };
             
             // 로컬 스토리지에 사용자 정보 저장 (세션 유지를 위함)
-            localStorage.setItem('currentUser', JSON.stringify({
-              ...userInfo,
-              loginTime: new Date().toISOString()
-            }));
+            localStorage.setItem('currentUser', JSON.stringify(userInfo));
             
             // 사용자 UI 업데이트 함수 호출
             import('./ui.js').then(ui => {
@@ -150,7 +149,8 @@ export function checkLoginStatus() {
             profileImage: res.properties?.profile_image || '',
             email: res.kakao_account?.email || '',
             provider: 'kakao',
-            loginTime: new Date().toISOString()
+            loginTime: new Date().toISOString(),
+            profileCompleted: false // 기본값은 false로 설정
           };
           
           // 로컬 스토리지 업데이트

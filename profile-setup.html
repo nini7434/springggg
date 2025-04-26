@@ -67,37 +67,20 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* 텍스트 영역 스타일 개선 */
+        /* 텍스트 영역이 차지하는 컬럼 수 조정 */
+        .md\:col-span-2 {
+            grid-column: span 2 / span 2;
+        }
+        
+        /* 전체 컨테이너 너비 조정 */
+        .container {
+            max-width: 1200px; /* 기본 컨테이너 너비 증가 */
+        }
+        
+        /* 텍스트 영역 너비 조정 */
         textarea.input-field {
-            min-height: 160px; /* 텍스트 영역 높이 증가 */
-            resize: vertical; /* 수직 리사이즈 허용 */
-            line-height: 1.6; /* 줄 간격 개선 */
-        }
-        
-        /* 미디어 쿼리 - 큰 화면에서 더 높게 조정 */
-        @media (min-width: 768px) {
-            textarea.input-field {
-                min-height: 180px;
-            }
-        }
-        
-        /* 텍스트 영역 스크롤바 스타일링 */
-        textarea.input-field::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        textarea.input-field::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        textarea.input-field::-webkit-scrollbar-thumb {
-            background-color: #ddd;
-            border-radius: 4px;
-        }
-        
-        textarea.input-field::-webkit-scrollbar-thumb:hover {
-            background-color: #ccc;
+            width: 100%;
+            min-width: 100%;
         }
     </style>
 </head>
@@ -162,7 +145,7 @@
 
     <!-- 메인 컨텐츠 -->
     <main class="container mx-auto pt-24 pb-16 px-4">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-5xl mx-auto">  <!-- 여기서 max-w-4xl에서 max-w-5xl로 변경 -->
             <!-- 페이지 헤더 -->
             <div class="text-center mb-10">
                 <h1 class="text-3xl md:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-500 animate-gradient">소중한 사람 찾기</h1>

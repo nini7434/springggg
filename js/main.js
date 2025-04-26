@@ -242,40 +242,63 @@ async function checkProfileCompletion(userId) {
 
 // 인증 관련 이벤트 리스너 설정
 function setupAuthEventListeners() {
- // 카카오 로그인 버튼
-if (kakaoLoginBtn) {
-  kakaoLoginBtn.addEventListener('click', async function() {
-    try {
-      const userInfo = await handleKakaoLogin();
-      if (userInfo) {
-        // 모달 닫기
-        const loginModal = document.getElementById('loginModal');
-        if (loginModal) loginModal.classList.add('hidden');
-        
-        // UI 업데이트
-        updateUserProfileUI(userInfo);
-        
-        alert(`${userInfo.nickname}님, 환영합니다!`);
-        
-        // 프로필 완료 여부 확인 (Firebase에 정보가 있다면)
-        if (window.firebaseDb) {
-          try {
-            const userDoc = await getDoc(doc(window.firebaseDb, "users", userInfo.id));
-            if (!userDoc.exists() || !userDoc.data().profileCompleted) {
-              // 프로필 설정 페이지로 이동
-              window.location.href = 'profile-setup.html';
+  // 카카오 로그인 버튼
+  const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
+  const kakaoSignupBtn = document.getElementById('kakaoSignupBtn');
+  
+  if (kakaoLoginBtn) {
+    kakaoLoginBtn.addEventListener('click', async function() {
+      try {
+        const userInfo = await handleKakaoLogin();
+        if (userInfo) {
+          // 모달 닫기
+          const loginModal = document.getElementById('loginModal');
+          if (loginModal) loginModal.classList.add('hidden');
+          
+          // UI 업데이트
+          updateUserProfileUI(userInfo);
+          
+          // Firebase 또는 로컬 스토리지에서 사용자의 프로필 완료 여부 확인
+          let profileCompleted = false;
+          
+          // localStorage에서 확인
+          const storedUser = localStorage.getItem('currentUser');
+          if (storedUser) {
+            try {
+              const userData = JSON.parse(storedUser);
+              if (userData.profileCompleted) {
+                profileCompleted = true;
+              }
+            } catch (error) {
+              console.error('저장된 사용자 정보 처리 오류:', error);
             }
-          } catch (error) {
-            console.error('프로필 확인 오류:', error);
+          }
+          
+          // Firebase에서도 확인 (가능하다면)
+          if (window.firebaseDb) {
+            try {
+              const userDoc = await getDoc(doc(window.firebaseDb, "users", userInfo.id));
+              if (userDoc.exists() && userDoc.data().profileCompleted) {
+                profileCompleted = true;
+              }
+            } catch (error) {
+              console.error('프로필 확인 오류:', error);
+            }
+          }
+          
+          alert(`${userInfo.nickname}님, 환영합니다!`);
+          
+          // 프로필이 완료되지 않았으면 프로필 설정 페이지로 리디렉션
+          if (!profileCompleted) {
+            window.location.href = 'profile-setup.html';
           }
         }
+      } catch (error) {
+        console.error('카카오 로그인 처리 오류:', error);
+        alert(typeof error === 'string' ? error : '로그인 중 오류가 발생했습니다.');
       }
-    } catch (error) {
-      console.error('카카오 로그인 처리 오류:', error);
-      alert(typeof error === 'string' ? error : '로그인 중 오류가 발생했습니다.');
-    }
-  });
-}
+    });
+  }
   
   // 카카오 회원가입 버튼 (로그인과 동일 기능)
   if (kakaoSignupBtn && kakaoLoginBtn) {
@@ -298,6 +321,19 @@ if (kakaoLoginBtn) {
           if (loginModal) loginModal.classList.add('hidden');
           
           alert(`${user.displayName || '사용자'}님, 환영합니다!`);
+          
+          // 프로필 완료 여부 확인 (Firebase에 정보가 있다면)
+          if (window.firebaseDb) {
+            try {
+              const userDoc = await getDoc(doc(window.firebaseDb, "users", user.uid));
+              if (!userDoc.exists() || !userDoc.data().profileCompleted) {
+                // 프로필 설정 페이지로 이동
+                window.location.href = 'profile-setup.html';
+              }
+            } catch (error) {
+              console.error('프로필 확인 오류:', error);
+            }
+          }
         }
       } catch (error) {
         console.error('구글 로그인 처리 오류:', error);
@@ -333,6 +369,19 @@ if (kakaoLoginBtn) {
           if (loginModal) loginModal.classList.add('hidden');
           
           alert(`${user.displayName || '사용자'}님, 환영합니다!`);
+          
+          // 프로필 완료 여부 확인 (Firebase에 정보가 있다면)
+          if (window.firebaseDb) {
+            try {
+              const userDoc = await getDoc(doc(window.firebaseDb, "users", user.uid));
+              if (!userDoc.exists() || !userDoc.data().profileCompleted) {
+                // 프로필 설정 페이지로 이동
+                window.location.href = 'profile-setup.html';
+              }
+            } catch (error) {
+              console.error('프로필 확인 오류:', error);
+            }
+          }
         }
       } catch (error) {
         console.error('이메일 로그인 처리 오류:', error);
@@ -374,6 +423,9 @@ if (kakaoLoginBtn) {
           if (loginModal) loginModal.classList.add('hidden');
           
           alert(`회원가입이 완료되었습니다. 이메일 인증을 완료해주세요.`);
+          
+          // 프로필 설정 페이지로 이동
+          window.location.href = 'profile-setup.html';
         }
       } catch (error) {
         console.error('회원가입 처리 오류:', error);

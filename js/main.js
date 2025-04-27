@@ -111,8 +111,10 @@ function checkKakaoLoginRedirect() {
         console.log('카카오 로그인 후 원래 페이지로 돌아갑니다:', returnPath);
         localStorage.removeItem('kakaoLoginSuccess');
         
-        // 페이지 이동
-        window.location.replace(returnPath);
+        // 페이지 이동 (setTimeout 추가)
+        setTimeout(() => {
+          window.location.href = returnPath;
+        }, 100);
       } else {
         // 리턴 경로가 index.html이거나 없으면 플래그만 제거
         localStorage.removeItem('kakaoLoginSuccess');

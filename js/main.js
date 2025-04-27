@@ -64,6 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // 카카오 SDK 초기화
   initializeKakao();
   
+  // 카카오 로그인 후 리디렉션 처리
+  checkKakaoLoginRedirect();
+  
   // 인증 상태 관찰자 설정
   setupAuthStateObserver(function(userInfo) {
     if (userInfo) {
@@ -93,6 +96,30 @@ document.addEventListener('DOMContentLoaded', function() {
   
   console.log('웹사이트가 초기화되었습니다.');
 });
+
+// 카카오 로그인 후 리디렉션 처리 함수
+function checkKakaoLoginRedirect() {
+  const kakaoLoginSuccess = localStorage.getItem('kakaoLoginSuccess');
+  
+  if (kakaoLoginSuccess === 'true') {
+    // index.html 페이지에서만 처리
+    if (window.location.pathname === '/springggg/' || 
+        window.location.pathname === '/springggg/index.html') {
+      
+      const returnPath = localStorage.getItem('kakaoLoginReturnPath');
+      if (returnPath && returnPath !== '/springggg/' && returnPath !== '/springggg/index.html') {
+        console.log('카카오 로그인 후 원래 페이지로 돌아갑니다:', returnPath);
+        localStorage.removeItem('kakaoLoginSuccess');
+        
+        // 페이지 이동
+        window.location.replace(returnPath);
+      } else {
+        // 리턴 경로가 index.html이거나 없으면 플래그만 제거
+        localStorage.removeItem('kakaoLoginSuccess');
+      }
+    }
+  }
+}
 
 // 이메일 인증 배너 표시
 function showEmailVerificationBanner() {

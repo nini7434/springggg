@@ -22,8 +22,13 @@ export function handleKakaoLogin() {
   }
   
   // 현재 경로 저장
-  const currentPath = window.location.pathname + window.location.search + window.location.hash;
-  localStorage.setItem('kakaoLoginReturnPath', currentPath);
+  const currentPath = window.location.pathname;
+  const currentSearch = window.location.search;
+  const currentHash = window.location.hash;
+
+  // 전체 URL을 그대로 저장
+  const currentUrl = currentPath + currentSearch + currentHash;
+  localStorage.setItem('kakaoLoginReturnPath', currentUrl);
   
   return new Promise((resolve, reject) => {
     // 카카오 로그인 팝업 열기 - 기본 동의 항목만 사용(scope 제거)
@@ -58,7 +63,10 @@ export function handleKakaoLogin() {
               const returnPath = localStorage.getItem('kakaoLoginReturnPath');
               if (returnPath && returnPath !== '/springggg/' && returnPath !== '/springggg/index.html') {
                 console.log('원래 페이지로 돌아갑니다:', returnPath);
-                window.location.replace(returnPath);
+                // setTimeout을 사용해 약간의 지연 후 리디렉션
+                setTimeout(() => {
+                  window.location.href = returnPath;
+                }, 100);
                 return;
               }
             }

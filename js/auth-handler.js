@@ -21,11 +21,11 @@ export function handleKakaoLogin() {
     return Promise.reject('카카오 SDK 초기화 실패');
   }
   
+  // 현재 경로 저장
+  const currentPath = window.location.pathname + window.location.search + window.location.hash;
+  localStorage.setItem('kakaoLoginReturnPath', currentPath);
+  
   return new Promise((resolve, reject) => {
-    // 현재 페이지 URL 저장 (리디렉션 방지용)
-    const currentPage = window.location.href;
-    sessionStorage.setItem('loginReturnUrl', currentPage);
-    
     // 카카오 로그인 팝업 열기 - 기본 동의 항목만 사용(scope 제거)
     Kakao.Auth.login({
       success: function(authObj) {
@@ -49,23 +49,32 @@ export function handleKakaoLogin() {
             
             // 로컬 스토리지에 사용자 정보 저장 (세션 유지를 위함)
             localStorage.setItem('currentUser', JSON.stringify(userInfo));
-            sessionStorage.setItem('isKakaoLoggedIn', 'true');
+            localStorage.setItem('kakaoLoginSuccess', 'true');
             
-            // 카카오 로그인 후 리디렉션 방지 플래그
-            window.kakaoLoginComplete = true;
+            // 리디렉션 감지
+            if (window.location.pathname === '/springggg/' || 
+                window.location.pathname === '/springggg/index.html') {
+              // 메인 페이지로 리디렉션된 경우, 저장된 경로로 다시 이동
+              const returnPath = localStorage.getItem('kakaoLoginReturnPath');
+              if (returnPath && returnPath !== '/springggg/' && returnPath !== '/springggg/index.html') {
+                console.log('원래 페이지로 돌아갑니다:', returnPath);
+                window.location.replace(returnPath);
+                return;
+              }
+            }
             
             // 사용자 UI 업데이트 함수 호출
             import('./ui.js').then(ui => {
               ui.updateUserProfileUI(userInfo);
               
-              // 페이지 이동 방지
+              // 모달 닫기
               const loginModal = document.getElementById('loginModal');
               if (loginModal) {
                 loginModal.classList.add('hidden');
               }
-              
-              resolve(userInfo);
             });
+            
+            resolve(userInfo);
           },
           fail: function(error) {
             console.error('카카오 사용자 정보 요청 실패:', error);
@@ -95,7 +104,8 @@ export function handleKakaoLogout() {
         
         // 로컬 스토리지에서 사용자 정보 제거
         localStorage.removeItem('currentUser');
-        sessionStorage.removeItem('isKakaoLoggedIn');
+        localStorage.removeItem('kakaoLoginSuccess');
+        localStorage.removeItem('kakaoLoginReturnPath');
         
         // 사용자 UI 업데이트 함수 호출
         import('./ui.js').then(ui => {
@@ -107,7 +117,8 @@ export function handleKakaoLogout() {
     } else {
       // 로컬 스토리지에서 사용자 정보 제거
       localStorage.removeItem('currentUser');
-      sessionStorage.removeItem('isKakaoLoggedIn');
+      localStorage.removeItem('kakaoLoginSuccess');
+      localStorage.removeItem('kakaoLoginReturnPath');
       
       // 사용자 UI 업데이트 함수 호출
       import('./ui.js').then(ui => {
@@ -121,15 +132,6 @@ export function handleKakaoLogout() {
 
 // 로그인 상태 확인 함수
 export function checkLoginStatus() {
-  // 리디렉션 방지를 위한 확인
-  if (sessionStorage.getItem('isKakaoLoggedIn') === 'true') {
-    const returnUrl = sessionStorage.getItem('loginReturnUrl');
-    if (returnUrl && returnUrl !== window.location.href) {
-      // 원래 페이지로 돌아가는 대신 현재 페이지에 남음
-      sessionStorage.removeItem('loginReturnUrl');
-    }
-  }
-  
   // 로컬 스토리지에서 사용자 정보 확인
   const currentUser = localStorage.getItem('currentUser');
   
@@ -154,12 +156,14 @@ export function checkLoginStatus() {
       } else {
         // 로그인 시간이 24시간을 초과했으면 로그아웃 처리
         localStorage.removeItem('currentUser');
-        sessionStorage.removeItem('isKakaoLoggedIn');
+        localStorage.removeItem('kakaoLoginSuccess');
+        localStorage.removeItem('kakaoLoginReturnPath');
       }
     } catch (error) {
       console.error('저장된 로그인 정보 처리 중 오류:', error);
       localStorage.removeItem('currentUser');
-      sessionStorage.removeItem('isKakaoLoggedIn');
+      localStorage.removeItem('kakaoLoginSuccess');
+      localStorage.removeItem('kakaoLoginReturnPath');
     }
   }
   
@@ -182,7 +186,7 @@ export function checkLoginStatus() {
           
           // 로컬 스토리지 업데이트
           localStorage.setItem('currentUser', JSON.stringify(userInfo));
-          sessionStorage.setItem('isKakaoLoggedIn', 'true');
+          localStorage.setItem('kakaoLoginSuccess', 'true');
           
           // 사용자 UI 업데이트 함수 호출
           import('./ui.js').then(ui => {
@@ -226,8 +230,8 @@ export function completeLogin(userInfo) {
 export function handleLogout() {
   // 로컬 스토리지에서 사용자 정보 삭제
   localStorage.removeItem('currentUser');
-  sessionStorage.removeItem('isKakaoLoggedIn');
-  sessionStorage.removeItem('loginReturnUrl');
+  localStorage.removeItem('kakaoLoginSuccess');
+  localStorage.removeItem('kakaoLoginReturnPath');
   
   // 사용자 UI 업데이트 함수 호출
   import('./ui.js').then(ui => {

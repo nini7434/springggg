@@ -34,6 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
     profileForm.addEventListener('submit', handleFormSubmit);
   }
   
+  // 프로필 이미지 변경 이벤트 리스너
+  const profileImageInput = document.getElementById('profileImage');
+  if (profileImageInput) {
+    profileImageInput.addEventListener('change', handleProfileImageChange);
+  }
+  
   // 초기화 완료
   console.log('프로필 설정 페이지 초기화 완료');
 });
@@ -330,5 +336,53 @@ function fillFormWithUserData(userData) {
     if (genderRadio) {
       genderRadio.checked = true;
     }
+  }
+  
+  // 프로필 이미지 (있는 경우)
+  if (userData.profileImage) {
+    displayProfileImage(userData.profileImage);
+  }
+}
+
+// 프로필 이미지 변경 처리 함수
+function handleProfileImageChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  // 파일 유형 검사
+  if (!file.type.match('image.*')) {
+    alert('이미지 파일만 업로드할 수 있습니다.');
+    e.target.value = ''; // 입력 필드 초기화
+    return;
+  }
+  
+  // 파일 크기 검사 (2MB 제한)
+  if (file.size > 2 * 1024 * 1024) {
+    alert('2MB 이하의 이미지만 업로드할 수 있습니다.');
+    e.target.value = ''; // 입력 필드 초기화
+    return;
+  }
+  
+  // 파일 미리보기
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    displayProfileImage(event.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+// 프로필 이미지 표시 함수
+function displayProfileImage(imageUrl) {
+  const profileImagePreview = document.getElementById('profileImagePreview');
+  const profileImagePlaceholder = document.getElementById('profileImagePlaceholder');
+  const profileImageDisplay = document.getElementById('profileImageDisplay');
+  
+  if (profileImageDisplay && profileImagePlaceholder && imageUrl) {
+    // 이미지 표시
+    profileImageDisplay.src = imageUrl;
+    profileImageDisplay.classList.remove('hidden');
+    
+    // 플레이스홀더 숨기기
+    profileImagePlaceholder.classList.add('hidden');
   }
 }

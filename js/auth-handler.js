@@ -131,8 +131,8 @@ function proceedWithKakaoLogin() {
         console.error('카카오 로그인 실패:', err);
         reject('카카오 로그인에 실패했습니다.');
       },
-      // 필요한 권한 스코프 명시
-      scope: 'profile_nickname,profile_image,account_email'
+      // 이메일 권한을 제외한 기본 권한만 요청
+      scope: 'profile_nickname,profile_image'
     });
   });
 }
@@ -289,7 +289,8 @@ export function checkLoginStatus() {
             id: `kakao:${res.id}`,
             nickname: res.properties?.nickname || '사용자',
             profileImage: res.properties?.profile_image || '',
-            email: res.kakao_account?.email || '',
+            // 이메일 권한이 없으므로 빈 문자열로 설정
+            email: '',
             provider: 'kakao',
             loginTime: new Date().toISOString(),
             profileCompleted: false, // 기본값은 false로 설정

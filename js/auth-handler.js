@@ -103,7 +103,8 @@ function proceedWithKakaoLogin() {
               id: `kakao:${res.id}`, // Firebase 사용자 ID로 사용하기 위해 접두어 추가
               nickname: res.properties?.nickname || '사용자',
               profileImage: res.properties?.profile_image || '',
-              email: res.kakao_account?.email || '',
+              // 이메일 권한이 없으므로 빈 문자열로 설정
+              email: '',
               provider: 'kakao',
               loginTime: new Date().toISOString(),
               profileCompleted: false, // 기본값은 false로 설정
@@ -152,7 +153,7 @@ function handleUIUpdate(userInfo) {
       }
       
       // 리디렉션 처리
-      redirectAfterLogin();
+      redirectAfterLogin(userInfo);
     }).catch(error => {
       console.error('UI 모듈 로드 실패:', error);
     });
@@ -160,8 +161,21 @@ function handleUIUpdate(userInfo) {
 }
 
 // 로그인 후 리디렉션 처리
-function redirectAfterLogin() {
-  // 저장된 경로로 리디렉션
+function redirectAfterLogin(userInfo) {
+  // 프로필이 완료되지 않은 경우 profile-setup.html 페이지로 직접 리다이렉션
+  if (userInfo && userInfo.profileCompleted !== true) {
+    console.log('프로필 설정이 필요하여 프로필 설정 페이지로 이동합니다.');
+    
+    // GitHub Pages 배포 경로를 고려한 절대 경로 사용
+    const profileSetupUrl = window.location.origin + '/springggg/profile-setup.html';
+    console.log('리디렉션 URL:', profileSetupUrl);
+    
+    // 페이지 이동
+    window.location.href = profileSetupUrl;
+    return;
+  }
+  
+  // 프로필이 이미 완료된 경우, 저장된 경로로 리디렉션
   const returnPath = localStorage.getItem('kakaoLoginReturnPath');
   const currentPathname = window.location.pathname;
   

@@ -3,419 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로필 설정 - 다시, 봄</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f9f5ff',
-                            100: '#f0e7ff',
-                            200: '#e2d2ff',
-                            300: '#c9adff',
-                            400: '#ac7dff',
-                            500: '#9353ff',
-                            600: '#7c2df9',
-                            700: '#6b21e8',
-                            800: '#581cb8',
-                            900: '#4a1a96',
-                        },
-                        accent: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            200: '#fecdd3',
-                            300: '#fda4af',
-                            400: '#fb7185',
-                            500: '#f43f5e',
-                            600: '#e11d48',
-                            700: '#be123c',
-                            800: '#9f1239',
-                            900: '#881337',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Pretendard', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <!-- Lucide 아이콘 -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- 프리텐다드 폰트 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <title>프로필 설정 - 스프링...</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            font-family: 'Pretendard', sans-serif;
-        }
-        .form-input-focus {
-            @apply focus:ring-2 focus:ring-primary-300 focus:border-primary-500 focus:outline-none;
-        }
-        .input-field {
-            @apply block w-full px-4 py-3 border border-gray-200 rounded-lg bg-white shadow-sm form-input-focus transition duration-200;
-        }
-        .animate-gradient {
-            background-size: 200% 200%;
-            animation: gradient 8s ease infinite;
-        }
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* 프로필 설정 페이지 스타일 */
+        .profile-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         
-        /* 텍스트 영역이 차지하는 컬럼 수 조정 */
-        .md\:col-span-2 {
-            grid-column: span 2 / span 2;
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
         }
         
-        /* 전체 컨테이너 너비 조정 */
-        .container {
-            max-width: 1200px; /* 기본 컨테이너 너비 증가 */
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
         
-        /* 텍스트 영역 너비 조정 */
-        textarea.input-field {
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .profile-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .profile-image-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .profile-image-preview img {
             width: 100%;
-            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .skip-btn {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .skip-btn a {
+            color: #777;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .skip-btn a:hover {
+            text-decoration: underline;
         }
     </style>
-    
-    <!-- Firebase SDK -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
-    <!-- 헤더 -->
-    <header class="bg-white shadow-sm fixed w-full top-0 z-10">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center">
-                    <a href="index.html" class="flex items-center">
-                        <!-- 로고 -->
-                        <img src="images/logo.svg" alt="로고" class="h-8 mr-2">
-                        <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-500">다시, 봄</span>
-                    </a>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>프로필 설정</h1>
+            <p>인연 매칭을 위한 정보를 설정해주세요</p>
+        </div>
+        
+        <form id="profileForm" class="profile-form">
+            <div class="profile-image-container">
+                <div class="profile-image-preview" id="profileImagePreview">
+                    <!-- 기본 프로필 이미지 또는 사용자 프로필 이미지가 표시됩니다 -->
+                    <img id="previewImg" src="" alt="프로필 이미지">
                 </div>
-                
-                <!-- 데스크탑 메뉴 -->
-                <div class="hidden md:flex space-x-6">
-                    <a href="index.html#about" class="text-gray-700 hover:text-primary-600 transition-colors">소개</a>
-                    <a href="index.html#how-it-works" class="text-gray-700 hover:text-primary-600 transition-colors">이용방법</a>
-                    <a href="index.html#success-stories" class="text-gray-700 hover:text-primary-600 transition-colors">성공사례</a>
-                    <a href="index.html#contact" class="text-gray-700 hover:text-primary-600 transition-colors">문의하기</a>
-                </div>
-                
-                <!-- 프로필 드롭다운 (로그인 상태일 때) -->
-                <div id="userProfileDropdown" class="relative hidden">
-                    <button id="userProfileBtn" class="flex items-center space-x-2 focus:outline-none">
-                        <img id="userAvatarImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Ccircle cx='12' cy='12' r='12' fill='%236B21E8'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='12' fill='white'%3EA%3C/text%3E%3C/svg%3E" class="h-8 w-8 rounded-full object-cover">
-                        <span id="userDisplayName" class="text-gray-700">사용자</span>
-                        <i data-lucide="chevron-down" class="h-4 w-4 text-gray-500"></i>
-                    </button>
-                    
-                    <div id="profileDropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10 hidden border border-gray-100">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                            <i data-lucide="user" class="h-4 w-4 inline-block mr-2"></i>마이페이지
-                        </a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                            <i data-lucide="settings" class="h-4 w-4 inline-block mr-2"></i>설정
-                        </a>
-                        <hr class="my-1 border-gray-100">
-                        <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                            <i data-lucide="log-out" class="h-4 w-4 inline-block mr-2"></i>로그아웃
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- 모바일 메뉴 버튼 -->
-                <button id="mobileMenuButton" class="md:hidden text-gray-700 focus:outline-none" aria-expanded="false">
-                    <i data-lucide="menu" class="h-6 w-6"></i>
-                </button>
+                <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+                <button type="button" id="changeProfileImageBtn" class="btn btn-outline">프로필 이미지 변경</button>
             </div>
             
-            <!-- 모바일 메뉴 -->
-            <div id="mobileMenu" class="md:hidden hidden pb-4">
-                <a href="index.html#about" class="block py-2 text-gray-700 hover:text-primary-600">소개</a>
-                <a href="index.html#how-it-works" class="block py-2 text-gray-700 hover:text-primary-600">이용방법</a>
-                <a href="index.html#success-stories" class="block py-2 text-gray-700 hover:text-primary-600">성공사례</a>
-                <a href="index.html#contact" class="block py-2 text-gray-700 hover:text-primary-600">문의하기</a>
+            <div class="form-group">
+                <label for="nickname">닉네임 (필수)</label>
+                <input type="text" id="nickname" name="nickname" required>
             </div>
+            
+            <div class="form-group">
+                <label for="gender">성별</label>
+                <select id="gender" name="gender">
+                    <option value="">선택하지 않음</option>
+                    <option value="male">남성</option>
+                    <option value="female">여성</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="ageRange">연령대</label>
+                <select id="ageRange" name="ageRange">
+                    <option value="">선택하지 않음</option>
+                    <option value="10s">10대</option>
+                    <option value="20s">20대</option>
+                    <option value="30s">30대</option>
+                    <option value="40s">40대</option>
+                    <option value="50s">50대 이상</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="bio">자기소개</label>
+                <textarea id="bio" name="bio" placeholder="자신에 대해 간단히 소개해주세요"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">프로필 저장하기</button>
+        </form>
+        
+        <div class="skip-btn">
+            <a href="index.html" id="skipProfileSetup">나중에 설정하기</a>
         </div>
-    </header>
-
-    <!-- 메인 컨텐츠 -->
-    <main class="container mx-auto pt-24 pb-16 px-4">
-        <div class="max-w-5xl mx-auto">  <!-- 여기서 max-w-4xl에서 max-w-5xl로 변경 -->
-            <!-- 페이지 헤더 -->
-            <div class="text-center mb-10">
-                <h1 class="text-3xl md:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-500 animate-gradient">소중한 사람 찾기</h1>
-                <p class="text-gray-600 max-w-xl mx-auto">잃어버린 소중한 인연을 찾을 수 있도록 도와드립니다. 아래 정보를 입력해주세요.</p>
-            </div>
-
-            <form id="profileForm" class="space-y-10">
-                <!-- 내 정보 섹션 -->
-                <section class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <div class="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-4">
-                        <h2 class="text-xl font-semibold text-white flex items-center">
-                            <i data-lucide="user" class="h-5 w-5 mr-2"></i>
-                            내 정보
-                        </h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="displayName" class="block text-sm font-medium text-gray-700 mb-1">이름/닉네임</label>
-                                <input type="text" id="displayName" name="displayName" class="input-field" placeholder="실명 또는 닉네임을 입력하세요">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">성별</label>
-                                <div class="flex space-x-4 mt-2">
-                                    <div class="flex items-center">
-                                        <input type="radio" id="gender-male" name="gender" value="male" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                        <label for="gender-male" class="ml-2 block text-gray-700">남성</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="radio" id="gender-female" name="gender" value="female" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                        <label for="gender-female" class="ml-2 block text-gray-700">여성</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 프로필 이미지 업로드 추가 -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">프로필 이미지</label>
-                                <div class="flex items-center space-x-4">
-                                    <div id="profileImagePreview" class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                                        <span id="profileImagePlaceholder" class="text-gray-400">
-                                            <i data-lucide="user" class="h-10 w-10"></i>
-                                        </span>
-                                        <img id="profileImageDisplay" class="hidden w-full h-full object-cover" alt="프로필 이미지">
-                                    </div>
-                                    <div class="flex-1">
-                                        <label for="profileImage" class="flex items-center px-4 py-2 bg-white text-primary-600 rounded-lg border border-primary-300 cursor-pointer hover:bg-primary-50 transition">
-                                            <i data-lucide="upload" class="h-4 w-4 mr-2"></i>
-                                            <span>이미지 선택</span>
-                                            <input type="file" id="profileImage" name="profileImage" accept="image/*" class="hidden">
-                                        </label>
-                                        <p class="text-xs text-gray-500 mt-1">JPG, PNG 파일, 최대 2MB</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label for="birthYear" class="block text-sm font-medium text-gray-700 mb-1">출생 연도</label>
-                                <select id="birthYear" name="birthYear" class="input-field">
-                                    <option value="">선택해주세요</option>
-                                    <!-- 1970부터 현재까지 -->
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label for="location" class="block text-sm font-medium text-gray-700 mb-1">현재 거주 지역</label>
-                                <select id="location" name="location" class="input-field">
-                                    <option value="">지역을 선택하세요</option>
-                                    <option value="서울">서울</option>
-                                    <option value="경기">경기</option>
-                                    <option value="인천">인천</option>
-                                    <option value="강원">강원</option>
-                                    <option value="충북">충북</option>
-                                    <option value="충남">충남</option>
-                                    <option value="대전">대전</option>
-                                    <option value="경북">경북</option>
-                                    <option value="경남">경남</option>
-                                    <option value="대구">대구</option>
-                                    <option value="울산">울산</option>
-                                    <option value="부산">부산</option>
-                                    <option value="전북">전북</option>
-                                    <option value="전남">전남</option>
-                                    <option value="광주">광주</option>
-                                    <option value="제주">제주</option>
-                                </select>
-                            </div>
-                            
-                            <div class="md:col-span-2">
-                                <label for="selfDescription" class="block text-sm font-medium text-gray-700 mb-1">나의 외모/특징</label>
-                                <textarea id="selfDescription" name="selfDescription" rows="5" placeholder="키, 체형, 머리 스타일, 눈/코/입 특징, 말투, 습관 등 본인을 식별할 수 있는 특징을 적어주세요." class="input-field"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+    </div>
+    
+    <script src="profile-setup.js"></script>
+    <script>
+        // 임시로 프로필 설정 페이지에서 필요한 기본 기능만 구현
+        document.addEventListener('DOMContentLoaded', function() {
+            // 로컬 스토리지에서 사용자 정보 가져오기
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                // 로그인 정보가 없으면 로그인 페이지로 리다이렉션
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const userInfo = JSON.parse(currentUser);
+            
+            // 프로필 이미지가 있으면 표시
+            const previewImg = document.getElementById('previewImg');
+            if (userInfo.profileImage) {
+                previewImg.src = userInfo.profileImage;
+            } else {
+                previewImg.src = 'default-profile.png'; // 기본 이미지 경로 설정
+            }
+            
+            // 닉네임 초기값 설정
+            const nicknameInput = document.getElementById('nickname');
+            if (userInfo.nickname) {
+                nicknameInput.value = userInfo.nickname;
+            }
+            
+            // 프로필 이미지 변경 버튼 클릭 이벤트
+            const changeProfileImageBtn = document.getElementById('changeProfileImageBtn');
+            const profileImageInput = document.getElementById('profileImageInput');
+            
+            changeProfileImageBtn.addEventListener('click', function() {
+                profileImageInput.click();
+            });
+            
+            // 파일 선택 시 이미지 미리보기
+            profileImageInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            // 프로필 저장 이벤트
+            const profileForm = document.getElementById('profileForm');
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
                 
-                <!-- 찾는 인연 정보 섹션 -->
-                <section class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <div class="bg-gradient-to-r from-accent-500 to-primary-500 px-6 py-4">
-                        <h2 class="text-xl font-semibold text-white flex items-center">
-                            <i data-lucide="search" class="h-5 w-5 mr-2"></i>
-                            찾고 있는 사람 정보
-                        </h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-6">
-                            <div>
-                                <label for="encounterYear" class="block text-sm font-medium text-gray-700 mb-1">만났던 연도</label>
-                                <select id="encounterYear" name="encounterYear" class="input-field">
-                                    <option value="">선택해주세요</option>
-                                    <!-- 1990부터 현재까지 -->
-                                </select>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="encounterRegion" class="block text-sm font-medium text-gray-700 mb-1">만났던 지역</label>
-                                    <select id="encounterRegion" name="encounterRegion" class="input-field">
-                                        <option value="">지역 선택</option>
-                                        <option value="서울">서울</option>
-                                        <option value="경기">경기</option>
-                                        <option value="인천">인천</option>
-                                        <option value="강원">강원</option>
-                                        <option value="충북">충북</option>
-                                        <option value="충남">충남</option>
-                                        <option value="대전">대전</option>
-                                        <option value="경북">경북</option>
-                                        <option value="경남">경남</option>
-                                        <option value="대구">대구</option>
-                                        <option value="울산">울산</option>
-                                        <option value="부산">부산</option>
-                                        <option value="전북">전북</option>
-                                        <option value="전남">전남</option>
-                                        <option value="광주">광주</option>
-                                        <option value="제주">제주</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="encounterLocationDetail" class="block text-sm font-medium text-gray-700 mb-1">상세 장소</label>
-                                    <input type="text" id="encounterLocationDetail" name="encounterLocationDetail" placeholder="예: 강남역 카페, 대학로 서점" class="input-field">
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label for="encounterSituation" class="block text-sm font-medium text-gray-700 mb-1">만남의 상황</label>
-                                <textarea id="encounterSituation" name="encounterSituation" rows="5" placeholder="어떤 상황에서 만났는지 자세히 설명해주세요. (예: 대학교 새내기 MT에서, 군대에서 같은 내무반, 아르바이트 동료)" class="input-field"></textarea>
-                            </div>
-                            
-                            <div>
-                                <label for="personDescription" class="block text-sm font-medium text-gray-700 mb-1">찾는 사람의 특징</label>
-                                <textarea id="personDescription" name="personDescription" rows="5" placeholder="찾고 계신 분의 이름(알고 있다면), 성별, 나이, 외모, 특징적인 말투나 행동 등을 자세히 적어주세요." class="input-field"></textarea>
-                            </div>
-                            
-                            <div>
-                                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">전하고 싶은 메시지</label>
-                                <textarea id="message" name="message" rows="5" placeholder="찾는 분에게 전하고 싶은 메시지가 있다면 적어주세요." class="input-field"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                // 프로필 정보 저장
+                const updatedUserInfo = {
+                    ...userInfo,
+                    nickname: nicknameInput.value,
+                    gender: document.getElementById('gender').value,
+                    ageRange: document.getElementById('ageRange').value,
+                    bio: document.getElementById('bio').value,
+                    profileCompleted: true // 프로필 설정 완료 표시
+                };
                 
-                <!-- 연락처 정보 섹션 -->
-                <section class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <div class="bg-gradient-to-r from-primary-600 to-accent-600 px-6 py-4">
-                        <h2 class="text-xl font-semibold text-white flex items-center">
-                            <i data-lucide="phone" class="h-5 w-5 mr-2"></i>
-                            연락처 정보
-                        </h2>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-sm text-gray-500 mb-4 bg-gray-50 p-3 rounded-lg flex items-start">
-                            <i data-lucide="shield" class="h-5 w-5 text-primary-500 mr-2 mt-0.5 flex-shrink-0"></i>
-                            매칭이 성공했을 때만 상대방에게 공개됩니다. 개인정보는 안전하게 보호됩니다.
-                        </p>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">연락처</label>
-                                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="'-' 없이 입력하세요" class="input-field">
-                            </div>
-                            
-                            <div>
-                                <label for="socialMedia" class="block text-sm font-medium text-gray-700 mb-1">SNS 계정 (선택)</label>
-                                <input type="text" id="socialMedia" name="socialMedia" placeholder="인스타그램, 페이스북 등" class="input-field">
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                // 이미지는 Firebase Storage에 업로드해야 하지만
+                // 현재는 간단히 로컬 스토리지에만 저장
+                // 실제 구현 시 Firebase Storage 연동 필요
                 
-                <!-- 제출 버튼 -->
-                <div class="pt-4">
-                    <button type="submit" class="w-full flex justify-center items-center space-x-2 py-4 px-6 border border-transparent rounded-xl shadow-md text-white bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 font-medium text-lg">
-                        <i data-lucide="check-circle" class="h-6 w-6 mr-2"></i>
-                        <span>서비스 이용하기</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </main>
-
-    <!-- 푸터 -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between">
-                <div class="mb-8 md:mb-0">
-                    <h3 class="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-accent-400">다시, 봄</h3>
-                    <p class="text-gray-400 max-w-md">잃어버린 소중한 인연을 다시 만나보세요. 과거의 소중한 만남을 현재로 이어주는 서비스입니다.</p>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-3 text-gray-200">서비스</h4>
-                        <ul class="space-y-2">
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">이용방법</a></li>
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">성공사례</a></li>
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">자주 묻는 질문</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-3 text-gray-200">회사</h4>
-                        <ul class="space-y-2">
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">소개</a></li>
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">블로그</a></li>
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">채용</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-3 text-gray-200">법적 정보</h4>
-                        <ul class="space-y-2">
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">이용약관</a></li>
-                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">개인정보처리방침</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
-                &copy; 2025 다시, 봄. All rights reserved.
-            </div>
-        </div>
-    </footer>
-
-    <!-- Firebase 설정 및 초기화 -->
-    <script type="module">
-      // Firebase 구성 정보
-      const firebaseConfig = {
-        apiKey: "AIzaSyCXWLanNJmOcVG43-VPHxwEhUOruPbYM3A",
-        authDomain: "spring-again-5beef.firebaseapp.com",
-        projectId: "spring-again-5beef",
-        storageBucket: "spring-again-5beef.appspot.com",
-        messagingSenderId: "230998888543",
-        appId: "1:230998888543:web:838ddfcde96b275516cbea",
-        measurementId: "G-Q79MWQPK8J"
-      };
-
-      // Firebase 초기화
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-      const app = initializeApp(firebaseConfig);
-      
-      // 전역 변수로 등록
-      window.firebaseApp = app;
+                // 로컬 스토리지에 업데이트된 정보 저장
+                localStorage.setItem('currentUser', JSON.stringify(updatedUserInfo));
+                
+                alert('프로필이 저장되었습니다.');
+                
+                // 메인 페이지로 이동
+                window.location.href = 'index.html';
+            });
+            
+            // 나중에 설정하기 버튼
+            const skipProfileSetup = document.getElementById('skipProfileSetup');
+            skipProfileSetup.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 사용자 정보 업데이트 - 나중에 다시 프로필 설정 화면을 표시하기 위해 profileCompleted를 true로 설정하지 않음
+                const updatedUserInfo = {
+                    ...userInfo,
+                    profilePrompted: true // 프로필 설정을 권유했음을 표시
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(updatedUserInfo));
+                
+                // 메인 페이지로 이동
+                window.location.href = 'index.html';
+            });
+        });
     </script>
-    
-    <!-- 프로필 설정 스크립트 -->
-    <script type="module" src="./js/profile-setup.js"></script>
-    
-    <!-- 모바일 메뉴 및 UI 기능 -->
-    <script type="module" src="./js/ui.js"></script>
 </body>
 </html>

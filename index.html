@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>다시, 봄 - 우연한 인연을 다시 만나다</title>
+  <!-- 나눔스퀘어 네오 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- 프리텐다드 폰트 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+    
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(to bottom right, #fdf2f8, #f5f3ff);
+      min-height: 100vh;
+    }
+    
+    .gradient-text {
+      background-image: linear-gradient(to right, #ec4899, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .gradient-button {
+      background-image: linear-gradient(to right, #ec4899, #a855f7);
+      transition: all 0.3s;
+    }
+    
+    .gradient-button:hover {
+      opacity: 0.85;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
+    }
+    
+    .feature-card {
+      transition: all 0.3s;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .story-image {
+      transition: all 0.5s;
+    }
+    
+    .story-card:hover .story-image {
+      transform: scale(1.05);
+    }
+    
+    /* 반응형 영상 컨테이너 */
+    .responsive-video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      padding-top: 25px;
+      height: 0;
+      overflow: hidden;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    .responsive-video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 1rem;
+    }
+    
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .animation-delay-2000 {
+      animation-delay: 2s;
+    }
+    
+    .animation-delay-4000 {
+      animation-delay: 4s;
+    }
+    
+    .blob {
+      animation: blob-animation 8s infinite;
+    }
+    
+    @keyframes blob-animation {
+      0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    }
+    
+    /* 프로필 이미지 플레이스홀더 스타일 */
+    .placeholder-image {
+      background-color: #EC4899;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    /* 로고 텍스트 스타일 */
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background-image: linear-gradient(to right, #7c2df9, #e11d48);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  </style>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f9f5ff',
+              100: '#f0e7ff',
+              200: '#e2d2ff',
+              300: '#c9adff',
+              400: '#ac7dff',
+              500: '#9353ff',
+              600: '#7c2df9',
+              700: '#6b21e8',
+              800: '#581cb8',
+              900: '#4a1a96',
+            },
+            accent: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              200: '#fecdd3',
+              300: '#fda4af',
+              400: '#fb7185',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+              800: '#9f1239',
+              900: '#881337',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- 카카오 SDK -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <!-- Firebase SDK -->
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
+</head>
+<body>
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white sticky top-0 z-50 shadow-sm">
+      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center cursor-pointer">
+          <!-- 로고 이미지 -->
+          <img src="images/logo.svg" alt="다시, 봄 로고" class="h-8 w-8 mr-2">
+          <h1 class="logo-text">다시, 봄</h1>
+        </div>
+        
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="#" class="text-gray-800 font-medium">홈</a>
+          <a href="#features" class="text-gray-600 hover:text-pink-500 transition-colors">기능</a>
+          <a href="#stories" class="text-gray-600 hover:text-pink-500 transition-colors">실제 이야기</a>
+          <a href="#" class="text-gray-600 hover:text-pink-500 transition-colors">자유 게시판</a>
+          
+          <!-- 로그인 버튼 (로그인 전에만 표시) -->
+          <button id="headerLoginBtn" class="px-5 py-2 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-full shadow-md hover:shadow-xl transition-all hover:scale-105">
+            로그인
+          </button>
+          
+          <!-- 사용자 프로필 영역 (로그인 후에만 표시) -->
+          <div id="userProfileDropdown" class="hidden relative">
+            <button id="userProfileBtn" class="flex items-center focus:outline-none">
+              <img id="userAvatarImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23EC4899'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='12' fill='white'%3EU%3C/text%3E%3C/svg%3E" alt="프로필 사진" class="w-8 h-8 rounded-full border-2 border-pink-400">
+              <span id="userDisplayName" class="ml-2 text-gray-700 hidden md:inline"></span>
+              <i data-lucide="chevron-down" class="w-4 h-4 ml-1 text-gray-600"></i>
+            </button>
+            
+            <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+              <a href="#" id="myProfileLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="user" class="w-4 h-4 inline-block mr-2"></i> 내 프로필
+              </a>
+              <a href="#" id="myPostsLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="file-text" class="w-4 h-4 inline-block mr-2"></i> 내 글 목록
+              </a>
+              <a href="#" id="favoritesLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="heart" class="w-4 h-4 inline-block mr-2"></i> 관심 목록
+              </a>
+              <hr class="my-1 border-gray-200">
+              <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i> 로그아웃
+              </a>
+            </div>
+          </div>
+        </nav>
+        
+        <button id="mobileMenuButton" class="md:hidden" aria-label="메뉴 열기">
+          <i data-lucide="menu" class="h-6 w-6"></i>
+        </button>
+      </div>
+      
+      <div id="mobileMenu" class="md:hidden bg-white py-4 px-6 shadow-md hidden">
+        <nav class="flex flex-col space-y-4">
+          <a href="#" class="flex items-center py-2 text-gray-800 font-medium">
+            <i data-lucide="home" class="h-5 w-5 mr-2"></i>홈
+          </a>
+          <a href="#features" class="flex items-center py-2 text-gray-600 hover:text-pink-500">
+            <i data-lucide="layout" class="h-5 w-5 mr-2"></i>기능
+          </a>
+          <a href="#stories" class="flex items-center py-2 text-gray-600 hover:text-pink-500">
+            <i data-lucide="book-open" class="h-5 w-5 mr-2"></i>실제 이야기
+          </a>
+          <a href="#" class="flex items-center py-2 text-gray-600 hover:text-pink-500">
+            <i data-lucide="users" class="h-5 w-5 mr-2"></i>자유 게시판
+          </a>
+          
+          <!-- 모바일 로그인 버튼 (로그인 전에만 표시) -->
+          <button id="mobileLoginBtn" class="flex items-center py-2 text-pink-500 font-medium">
+            <i data-lucide="log-in" class="h-5 w-5 mr-2"></i>로그인
+          </button>
+          
+          <!-- 모바일 사용자 프로필 영역 (로그인 후에만 표시) -->
+          <div id="mobileUserProfile" class="hidden">
+            <div class="flex items-center py-2 text-gray-700">
+              <img id="mobileUserAvatarImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23EC4899'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='12' fill='white'%3EU%3C/text%3E%3C/svg%3E" alt="프로필 사진" class="w-6 h-6 rounded-full mr-2">
+              <span id="mobileUserDisplayName">사용자</span>
+            </div>
+            <a href="#" id="mobileMyProfileLink" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="user" class="h-4 w-4 mr-2"></i>내 프로필
+            </a>
+            <a href="#" id="mobileMyPostsLink" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="file-text" class="h-4 w-4 mr-2"></i>내 글 목록
+            </a>
+            <a href="#" id="mobileFavoritesLink" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="heart" class="h-4 w-4 mr-2"></i>관심 목록
+            </a>
+            <a href="#" id="mobileLogoutBtn" class="flex items-center py-2 pl-7 text-gray-600 hover:text-pink-500">
+              <i data-lucide="log-out" class="h-4 w-4 mr-2"></i>로그아웃
+            </a>
+          </div>
+        </nav>
+      </div>
+    </header>
+    
+    <main class="flex-grow">
+      <!-- Hero Section -->
+      <section class="relative py-20 md:py-32 overflow-hidden">
+        <!-- Decorative blobs -->
+        <div class="absolute top-20 left-10 w-64 h-64 bg-pink-200 opacity-30 mix-blend-multiply filter blur-3xl rounded-full blob"></div>
+        <div class="absolute top-40 right-10 w-80 h-80 bg-purple-200 opacity-30 mix-blend-multiply filter blur-3xl rounded-full blob animation-delay-2000"></div>
+        <div class="absolute -bottom-20 left-1/3 w-72 h-72 bg-blue-200 opacity-30 mix-blend-multiply filter blur-3xl rounded-full blob animation-delay-4000"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+          <div class="max-w-4xl mx-auto text-center space-y-8">
+            <h1 class="text-5xl md:text-6xl font-light leading-tight">
+              우연히 <span class="gradient-text font-medium">스친 인연</span>을 <br>
+              다시 만날 수 있다면?
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
+              짧은 만남이었지만 잊을 수 없는 그 사람, <br class="hidden md:block">
+              그때 이름을 물어볼 걸 하고 아쉬웠던 그 순간, <br class="hidden md:block">
+              <span class="gradient-text font-medium">다시, 봄</span>에서 소중한 인연을 찾아보세요.
+            </p>
+            
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-center gap-6">
+              <a href="#" class="gradient-button px-8 py-4 text-white rounded-full shadow-lg text-lg font-medium w-full sm:w-auto">
+                시작하기
+              </a>
+              
+              <a href="#features" class="flex items-center text-gray-700 hover:text-purple-600 transition-colors duration-300 mt-4 sm:mt-0">
+                <span>서비스 알아보기</span>
+                <i data-lucide="chevron-right" class="h-4 w-4 ml-1"></i>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 유튜브 영상 추가 (이미지 대신) -->
+          <div class="max-w-5xl mx-auto mt-16">
+            <div class="responsive-video-container">
+              <iframe 
+                src="https://www.youtube.com/embed/MZhbRkEOBtY?controls=0&showinfo=0&rel=0&autoplay=0&loop=1&mute=1"
+                title="이산가족 상봉 영상" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+            <p class="text-sm text-gray-500 mt-3 text-center">소중한 사람과의 재회, 그 감동적인 순간</p>
+          </div>
+        </div>
+        
+        <!-- 수정된 스크롤 인디케이터 (중앙 정렬) -->
+        <div class="absolute bottom-10 left-0 right-0 mx-auto flex flex-col items-center justify-center animate-bounce text-center">
+          <span class="text-sm text-gray-500 mb-2">아래로 스크롤</span>
+          <i data-lucide="chevron-down" class="h-6 w-6 text-gray-500 mx-auto"></i>
+        </div>
+      </section>
+      
+      <!-- How It Works -->
+      <section class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+          <div class="text-center mb-16">
+            <h2 class="text-4xl font-light mb-4">서비스 이용 방법</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">다시, 봄에서 소중한 인연을 찾는 과정은 간단합니다.</p>
+          </div>
+          
+          <div class="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+            <div class="relative p-6 bg-gray-50 rounded-2xl">
+              <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-r from-pink-400 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">1</div>
+              <h3 class="text-2xl font-medium mb-4 mt-6 text-center">나를 찾는 사람 확인</h3>
+              <p class="text-gray-600 text-center">누군가 당신과의 만남을 기억하고 찾고 있는지 확인해보세요.</p>
+            </div>
+            
+            <div class="relative p-6 bg-gray-50 rounded-2xl">
+              <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">2</div>
+              <h3 class="text-2xl font-medium mb-4 mt-6 text-center">인연 등록하기</h3>
+              <p class="text-gray-600 text-center">찾고 싶은 사람에 대한 기억과 만남의 정보를 등록하세요.</p>
+            </div>
+            
+            <div class="relative p-6 bg-gray-50 rounded-2xl">
+              <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">3</div>
+              <h3 class="text-2xl font-medium mb-4 mt-6 text-center">재회의 순간</h3>
+              <p class="text-gray-600 text-center">서로의 기억이 일치하면, 소중한 인연과 다시 연결될 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Features Section -->
+      <section id="features" class="py-24 bg-gray-50">
+        <div class="container mx-auto px-4">
+          <div class="text-center mb-16">
+            <h2 class="text-4xl font-light mb-4">주요 기능</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">지금 이 순간에도 누군가가 당신을 찾고 있을지도 모릅니다.</p>
+          </div>
+          
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="feature-card bg-white rounded-2xl p-8 shadow-lg">
+              <div class="p-4 bg-pink-50 rounded-xl w-16 h-16 flex items-center justify-center mb-6">
+                <i data-lucide="search" class="h-6 w-6 text-pink-500"></i>
+              </div>
+              <h3 class="text-2xl font-medium mb-4">나를 찾는 사람 보기</h3>
+              <p class="text-gray-700 mb-8">누군가 당신을 찾고 있을지도 모릅니다. 여러분의 정보와 일치하는 글이 있는지 확인해보세요.</p>
+              <div class="flex items-center text-pink-600 hover:text-pink-700 transition-colors">
+                <span class="text-sm font-medium">자세히 보기</span>
+                <i data-lucide="chevron-right" class="h-4 w-4 ml-1"></i>
+              </div>
+            </div>
+            
+            <div class="feature-card bg-white rounded-2xl p-8 shadow-lg">
+              <div class="p-4 bg-purple-50 rounded-xl w-16 h-16 flex items-center justify-center mb-6">
+                <i data-lucide="pen-line" class="h-6 w-6 text-purple-500"></i>
+              </div>
+              <h3 class="text-2xl font-medium mb-4">누군가를 찾고 있어요</h3>
+              <p class="text-gray-700 mb-8">그때 그 장소, 그 시간에 만났던 특별한 사람에 대한 기억을 남겨보세요.</p>
+              <div class="flex items-center text-purple-600 hover:text-purple-700 transition-colors">
+                <span class="text-sm font-medium">자세히 보기</span>
+                <i data-lucide="chevron-right" class="h-4 w-4 ml-1"></i>
+              </div>
+            </div>
+            
+            <div class="feature-card bg-white rounded-2xl p-8 shadow-lg">
+              <div class="p-4 bg-blue-50 rounded-xl w-16 h-16 flex items-center justify-center mb-6">
+                <i data-lucide="users" class="h-6 w-6 text-blue-500"></i>
+              </div>
+              <h3 class="text-2xl font-medium mb-4">자유 게시판</h3>
+              <p class="text-gray-700 mb-8">여러분의 이야기를 공유하고 다른 사람들의 특별한 만남 스토리를 읽어보세요.</p>
+              <div class="flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                <span class="text-sm font-medium">자세히 보기</span>
+                <i data-lucide="chevron-right" class="h-4 w-4 ml-1"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Success Stories -->
+      <section id="stories" class="py-24">
+        <div class="container mx-auto px-4">
+          <div class="text-center mb-16">
+            <h2 class="text-4xl font-light mb-4">실제 이야기</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">다시, 봄을 통해 소중한 인연을 다시 만난 사람들의 이야기</p>
+          </div>
+          
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div class="h-56 overflow-hidden">
+                <!-- GitHub에 업로드된 이미지 사용 -->
+                <img src="https://raw.githubusercontent.com/nini7434/springggg/main/images/용산역.jpg" alt="용산역 스타벅스" class="story-image w-full h-full object-cover">
+              </div>
+              <div class="p-6">
+                <div class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
+                  용산역 스타벅스에서
+                </div>
+                <p class="text-gray-700 mb-6">2019년 용산역 기차를 기다리는 스타벅스에서 마주쳤던 그 여자. 같은 책을 읽고 있었던 우연한 만남, 다시 봄을 통해 1년 만에 다시 만났습니다.</p>
+                <div class="flex justify-between items-center">
+                  <p class="text-sm text-gray-600">민준, 31세</p>
+                  <div class="flex items-center text-pink-400">
+                    <i data-lucide="heart" class="h-4 w-4 mr-1 fill-current"></i>
+                    <span class="text-xs">128</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div class="h-56 overflow-hidden">
+                <!-- GitHub에 업로드된 이미지 사용 -->
+                <img src="https://raw.githubusercontent.com/nini7434/springggg/main/images/강남역.jpg" alt="강남역 출구" class="story-image w-full h-full object-cover">
+              </div>
+              <div class="p-6">
+                <div class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
+                  강남역에서의 인연
+                </div>
+                <p class="text-gray-700 mb-6">2023년에 강남역에서 매일 출근 시간에 마주쳤던 그 남자. 항상 같은 시간에 2번 출구로 나가던 그를 6개월 만에 다시 봄에서 찾았어요.</p>
+                <div class="flex justify-between items-center">
+                  <p class="text-sm text-gray-600">서연, 27세</p>
+                  <div class="flex items-center text-pink-400">
+                    <i data-lucide="heart" class="h-4 w-4 mr-1 fill-current"></i>
+                    <span class="text-xs">95</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="story-card bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div class="h-56 overflow-hidden">
+                <!-- GitHub에 업로드된 이미지 사용 -->
+                <img src="https://raw.githubusercontent.com/nini7434/springggg/main/images/인천공항.jpg" alt="인천공항 대기실" class="story-image w-full h-full object-cover">
+              </div>
+              <div class="p-6">
+                <div class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium inline-block mb-4">
+                  인천공항에서의 만남
+                </div>
+                <p class="text-gray-700 mb-6">2021년 인천공항에서 일본으로 가는 아침 비행기에서 어깨를 빌려주며 이야기 나눴던 그 남자. 8개월 후 우연히 다시 봄에서 서로를 발견했어요.</p>
+                <div class="flex justify-between items-center">
+                  <p class="text-sm text-gray-600">지현, 26세</p>
+                  <div class="flex items-center text-pink-400">
+                    <i data-lucide="heart" class="h-4 w-4 mr-1 fill-current"></i>
+                    <span class="text-xs">87</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mt-12">
+            <a href="#" class="gradient-button px-8 py-3 text-white rounded-full inline-block">
+              더 많은 이야기 보기
+            </a>
+          </div>
+        </div>
+      </section>
+      
+      <!-- CTA Section -->
+      <section class="py-24 bg-gradient-to-r from-pink-50 to-purple-50">
+        <div class="container mx-auto px-4">
+          <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-light mb-6">지금 시작해보세요</h2>
+            <p class="text-xl text-gray-700 mb-10 max-w-2xl mx-auto">
+              어쩌면 그 사람도 당신을 찾고 있을지도 모릅니다.
+              다시, 봄에서 잊지 못할 인연을 찾아보세요.
+            </p>
+            <a href="#" class="gradient-button px-10 py-4 text-white rounded-full shadow-xl inline-flex items-center text-lg font-medium">
+              <span>지금 시작하기</span>
+              <i data-lucide="arrow-right" class="h-5 w-5 ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <!-- 수정된 푸터 부분 -->
+    <footer class="bg-white py-12 border-t border-gray-100">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-wrap justify-center md:justify-end space-x-4 md:space-x-6 mb-8">
+          <a href="#" class="text-gray-600 hover:text-pink-500 transition-colors py-2">서비스 소개</a>
+          <a href="#" class="text-gray-600 hover:text-pink-500 transition-colors py-2">이용약관</a>
+          <a href="#" class="text-gray-600 hover:text-pink-500 transition-colors py-2">개인정보</a>
+          <a href="#" class="text-gray-600 hover:text-pink-500 transition-colors py-2">고객센터</a>
+        </div>
+        <div class="text-center border-t border-gray-100 pt-8">
+          <p class="text-sm text-gray-600 font-medium mb-4">다시, 봄 – 모든 인연은 소중합니다.</p>
+          <div class="flex items-center justify-start mb-2">
+            <img src="images/logo.svg" alt="다시, 봄 로고" class="h-6 w-6 mr-2">
+            <h2 class="logo-text">다시, 봄</h2>
+          </div>
+          <p class="text-xs text-gray-500">&copy; 2025 다시, 봄. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- 로그인/회원가입 모달 -->
+  <div id="loginModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <!-- 배경 오버레이 -->
+      <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+      
+      <!-- 모달 중앙 정렬 트릭 -->
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      
+      <!-- 모달 내용 -->
+      <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+              <!-- 모달 헤더 -->
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-medium leading-6 text-gray-900" id="modal-title">
+                  로그인
+                </h3>
+                <button type="button" class="closeModal text-gray-400 hover:text-gray-500 focus:outline-none">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+              </div>
+              
+              <!-- 모달 내용 -->
+              <div class="mt-2">
+                <!-- 로그인 폼 -->
+                <div id="loginForm">
+                  <p class="mb-6 text-gray-600">다시, 봄에 오신 것을 환영합니다. 소중한 인연을 찾기 위해 로그인해주세요.</p>
+                  
+                  <div class="space-y-4">
+                    <div>
+                      <label for="email" class="block text-sm font-medium text-gray-700">이메일</label>
+                      <input type="email" id="email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
+                    </div>
+                    
+                    <div>
+                      <label for="password" class="block text-sm font-medium text-gray-700">비밀번호</label>
+                      <input type="password" id="password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호" required>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500">
+                        <label for="remember-me" class="block ml-2 text-sm text-gray-700">
+                          로그인 상태 유지
+                        </label>
+                      </div>
+                      
+                      <div class="text-sm">
+                        <a href="#" id="forgotPassword" class="font-medium text-pink-600 hover:text-pink-500">
+                          비밀번호 찾기
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <button type="button" id="loginButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        로그인
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6">
+                    <div class="relative">
+                      <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div class="relative flex justify-center text-sm">
+                        <span class="px-2 text-gray-500 bg-white">또는</span>
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-3 mt-6">
+                      <button type="button" id="googleLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
+                        Google 계정으로 로그인
+                      </button>
+                      
+                      <button type="button" id="kakaoLoginBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
+                        카카오로 시작하기
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                      아직 회원이 아니신가요?
+                      <a href="#" id="showSignup" class="font-medium text-pink-600 hover:text-pink-500">
+                        회원가입
+                      </a>
+                    </p>
+                  </div>
+                </div>
+                
+                <!-- 회원가입 폼 (처음에는 숨김) -->
+                <div id="signupForm" class="hidden">
+                  <p class="mb-6 text-gray-600">다시, 봄에서 소중한 인연을 찾기 위한 첫 걸음을 시작하세요.</p>
+                  
+                  <div class="space-y-4">
+                    <div>
+                      <label for="signup-name" class="block text-sm font-medium text-gray-700">이름</label>
+                      <input type="text" id="signup-name" name="name" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이름" required>
+                    </div>
+                    
+                    <div>
+                      <label for="signup-email" class="block text-sm font-medium text-gray-700">이메일</label>
+                      <input type="email" id="signup-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="이메일 주소" required>
+                    </div>
+                    
+                    <div>
+                      <label for="signup-password" class="block text-sm font-medium text-gray-700">비밀번호</label>
+                      <input type="password" id="signup-password" name="password" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 (8자 이상)" minlength="8" required>
+                    </div>
+                    
+                    <div>
+                      <label for="signup-password-confirm" class="block text-sm font-medium text-gray-700">비밀번호 확인</label>
+                      <input type="password" id="signup-password-confirm" name="password-confirm" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="비밀번호 확인" minlength="8" required>
+                    </div>
+                    
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <input id="terms" name="terms" type="checkbox" class="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500" required>
+                      </div>
+                      <div class="ml-3 text-sm">
+                        <label for="terms" class="font-medium text-gray-700">
+                          <a href="#" class="text-pink-600 hover:text-pink-500">이용약관</a> 및 
+                          <a href="#" class="text-pink-600 hover:text-pink-500">개인정보처리방침</a>에 동의합니다.
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <button type="button" id="signupButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        회원가입
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6">
+                    <div class="relative">
+                      <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div class="relative flex justify-center text-sm">
+                        <span class="px-2 text-gray-500 bg-white">또는</span>
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-3 mt-6">
+                      <button type="button" id="googleSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-2" alt="Google 로고">
+                        Google 계정으로 회원가입
+                      </button>
+                      
+                      <button type="button" id="kakaoSignupBtn" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-800 bg-yellow-300 border border-yellow-400 rounded-md shadow-sm hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" class="w-5 h-5 mr-2" alt="카카오 로고">
+                        카카오로 시작하기
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                      이미 회원이신가요?
+                      <a href="#" id="showLogin" class="font-medium text-pink-600 hover:text-pink-500">
+                        로그인
+                      </a>
+                    </p>
+                  </div>
+                </div>
+                
+                <!-- 비밀번호 찾기 폼 (처음에는 숨김) -->
+                <div id="forgotPasswordForm" class="hidden">
+                  <p class="mb-6 text-gray-600">가입한 이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
+                  
+                  <div class="space-y-4">
+                    <div>
+                      <label for="reset-email" class="block text-sm font-medium text-gray-700">이메일</label>
+                      <input type="email" id="reset-email" name="email" class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" placeholder="가입한 이메일 주소" required>
+                    </div>
+                    
+                    <div>
+                      <button type="button" id="resetPasswordButton" class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-500 border border-transparent rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        비밀번호 재설정 링크 보내기
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                      <a href="#" id="backToLogin" class="font-medium text-pink-600 hover:text-pink-500">
+                        로그인으로 돌아가기
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Firebase SDK 초기화 -->
+  <script type="module">
+    // Firebase SDK 가져오기
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    
+    // Firebase 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXWLanNJmOcVG43-VPHxwEhUOruPbYM3A",
+      authDomain: "spring-again-5beef.firebaseapp.com",
+      projectId: "spring-again-5beef",
+      storageBucket: "spring-again-5beef.appspot.com",
+      messagingSenderId: "230998888543",
+      appId: "1:230998888543:web:838ddfcde96b275516cbea",
+      measurementId: "G-Q79MWQPK8J"
+    };
+    
+    // Firebase 초기화
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    // 전역 변수로 등록
+    window.firebaseApp = app;
+    window.firebaseAuth = auth;
+    window.firebaseDb = db;
+    
+    // 인증 상태 변경 감지
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('Firebase 인증: 로그인 상태', user);
+        // 여기서 UI 업데이트 함수 호출
+        updateUserProfileUI(user.displayName, user.photoURL);
+      } else {
+        console.log('Firebase 인증: 로그아웃 상태');
+      }
+    });
+  </script>
+  
+  <!-- 메인 스크립트 -->
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
